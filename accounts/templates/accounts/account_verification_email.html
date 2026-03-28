@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verify Your Account - GoodNews Merch</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f9f9f9; color: #1A1C1C; }
+    .email-wrap { max-width: 600px; margin: 40px auto; background: #fff; border: 1px solid #E2E2E2; }
+    .email-header { background: #0A0A0A; padding: 32px; text-align: center; }
+    .email-header h1 { color: #fff; font-size: 20px; letter-spacing: 3px; font-weight: 700; }
+    .email-body { padding: 48px 40px; text-align: center; }
+    .verify-icon { font-size: 48px; margin-bottom: 24px; }
+    .email-body h2 { font-size: 22px; font-weight: 700; letter-spacing: 2px; margin-bottom: 16px; }
+    .email-body p { color: #474747; line-height: 1.7; font-size: 15px; margin-bottom: 32px; }
+    .verify-btn { display: inline-block; padding: 16px 40px; background: #0A0A0A; color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 2px; font-weight: 700; }
+    .expiry-note { margin-top: 32px; font-size: 13px; color: #6B7280; }
+    .url-fallback { margin-top: 20px; font-size: 12px; color: #6B7280; word-break: break-all; }
+    .email-footer { background: #F9F9F9; padding: 24px; text-align: center; border-top: 1px solid #E2E2E2; }
+    .email-footer p { font-size: 12px; color: #6B7280; }
+  </style>
+</head>
+<body>
+  <div class="email-wrap">
+
+    <div class="email-header">
+      <h1>GOODNEWS MERCH</h1>
+    </div>
+
+    <div class="email-body">
+      <div class="verify-icon">✉️</div>
+      <h2>VERIFY YOUR EMAIL</h2>
+      <p>
+        Hi <strong>{{ user.first_name }}</strong>, welcome to GoodNews Merch!<br>
+        Please verify your email address to activate your account and start shopping.
+      </p>
+
+      <a href="{{ current_site }}{% url 'activate' uidb64 token %}" class="verify-btn">
+        VERIFY MY ACCOUNT
+      </a>
+
+      <p class="expiry-note">This link expires in 24 hours.</p>
+
+      <p class="url-fallback">
+        If the button doesn't work, copy and paste this link into your browser:<br>
+        {{ current_site }}{% url 'activate' uidb64 token %}
+      </p>
+    </div>
+
+    <div class="email-footer">
+      <p>
+        You received this email because you created an account on GoodNews Merch.<br>
+        If you did not sign up, please ignore this email.
+      </p>
+      <p style="margin-top: 8px;">&copy; {% now "Y" %} GoodNews Merch. All rights reserved.</p>
+    </div>
+
+  </div>
+</body>
+</html>

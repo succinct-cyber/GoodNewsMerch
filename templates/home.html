@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} GoodNews Merch | Wear the Message, Share the News {% endblock %}
+
+{% block content %}
+
+<!-- Hero Banner -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1 class="hero-title"> WEAR THE <br> 
+      <span class="hero-message"> MESSAGE </span><br>
+      </h1>
+      <h2 class="hero-share"> SHARE THE NEWS.</h2>
+
+      <p class="hero-sub"> Wear your faith comfortably and in style.</p>
+      
+      <a href="{#}" class="btn btn-dark">SHOP THE DROP</a>
+      <a href="{#}" class="btn btn-outline">VIEW LOOKBOOK</a>
+    </div>
+    <div class="hero-image">
+      <img src="{% static 'images/items/Recreate_the_exact_202603201111 (1) 2.png' %}" alt="GoodNews Merch Hero" class="hero-img">
+    </div>
+  
+  </div>
+</section>
+
+<!-- Fundraising banner -->
+
+<section class="fundraising-banner-section">
+  <div class="fundraising-banner-wrap">
+    <img src="{% static 'images/banners/FUND RAISING BANNER (2).png' %}"
+         alt="Fundraising banner"
+         class="fundraising-banner-img">
+    <a href="#" class="banner-btn">
+      PROCEED
+    </a>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section class="section products-section">
+  <div class="section-header">
+    <h2 class="section-title">POPULAR PRODUCTS</h2>
+    <a href="{#}" class="btn btn-outline">SEE ALL</a>
+  </div>
+
+  <div class="products-grid">
+    {% for product in products %}
+      <div class="product-card">
+        <a href="{{ product.get_url }}" class="product-image-wrap">
+          {% if product.images %}
+            <img src="{{ product.images.url }}" alt="{{ product.product_name }}" class="product-img">
+          {% else %}
+            <div class="product-img-placeholder">
+            <i class="fas fa-image"></i>
+            </div>
+          {% endif %}
+        </a>
+        <div class="product-info">
+          <a href="{{ product.get_url }}" class="product-name">{{ product.product_name }}</a>
+          <p class="product-price">₦{{ product.price|floatformat:2 }}</p>
+          <a href="{% url 'add_cart' product.id %}" class="btn btn-outline btn-sm">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <p class="empty-state">No products available yet.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Fundraising Banner -->
+<section class="fundraising-banner" id="fundraising">
+  <div class="fundraising-inner">
+    <h2>EVERY PURCHASE SUPPORTS A CAUSE.</h2>
+    <p>A portion of every sale goes toward outreach programs and community development.</p>
+    <a href="{#}" class="btn btn-light">SHOP & GIVE BACK</a>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Dashboard | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+  <div class="container">
+    <div class="dashboard-layout">
+
+      {% include 'includes/dashboard_sidebar.html' %}
+
+      <!-- Main Content -->
+      <div class="dashboard-main">
+        <h1 class="dashboard-title">DASHBOARD</h1>
+        <p class="dashboard-welcome">
+          Welcome back, <strong>John</strong>
+        </p>
+
+        <!-- Stats Cards -->
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div class="stat-info">
+              <p class="stat-label">Total Orders</p>
+              <h3 class="stat-value">5</h3>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+              <p class="stat-label">Completed</p>
+              <h3 class="stat-value">3</h3>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <p class="stat-label">Pending</p>
+              <h3 class="stat-value">2</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="dashboard-recent">
+          <h2 class="dashboard-section-title">RECENT ORDERS</h2>
+          <!-- {% if orders %} -->
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>ORDER #</th>
+                  <th>DATE</th>
+                  <th>TOTAL</th>
+                  <th>STATUS</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- {% for order in orders|slice:":5" %} -->
+                  <tr>
+                    <td>12345678</td>
+                    <td>03/28/2026</td>
+                    <td>₦565748</td>
+                    <td>
+                      <span class="order-status status-{{ order.status|lower }}">
+                        Success
+                      </span>
+                    </td>
+                    <td>
+                      <a href="#" class="table-link">
+                        View &rarr;
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% if orders.count > 5 %}
+              <a href="#" class="btn btn-outline" style="margin-top: 16px;">
+                View All Orders
+              </a>
+            {% endif %}
+          {% else %}
+            <div class="empty-state">
+              <i class="fas fa-shopping-bag"></i>
+              <p>You haven't placed any orders yet.</p>
+              <a href="{% url 'shop' %}" class="btn btn-dark">START SHOPPING</a>
+            </div>
+          {% endif %}
+        </div>
+
+      </div><!-- end dashboard-main -->
+    </div><!-- end dashboard-layout -->
+  </div>
+</section>
+
+{% endblock %}

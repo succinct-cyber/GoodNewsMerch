@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ single_product.product_name }} | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="breadcrumb-wrap">
+  <div class="container">
+    <a href="{% url 'home' %}">Home</a>
+    <span>/</span>
+    <a href="{% url 'store' %}">Shop</a>
+    <span>/</span>
+    <a href="{% url 'products_by_category' single_product.category.slug %}">{{ single_product.category }}</a>
+    <span>/</span>
+    <span>{{ single_product.product_name }}</span>
+  </div>
+</div>
+
+<!-- Product Detail -->
+<section class="product-detail">
+  <div class="product-detail-inner">
+
+    <!-- Product Images -->
+    <div class="product-gallery">
+      <div class="product-main-image">
+        <img src="{{ single_product.images.url }}" alt="{{ single_product.product_name }}" id="mainProductImage">
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="product-info-panel">
+      <p class="product-category">{{ single_product.category }}</p>
+      <h1 class="product-title">{{ single_product.product_name }}</h1>
+
+      <!-- Rating -->
+      <div class="product-rating">
+        {% for i in "12345" %}
+          {% if forloop.counter <= single_product.averageReview %}
+            <i class="fas fa-star"></i>
+          {% elif forloop.counter|add:"-0.5" <= single_product.averageReview %}
+            <i class="fas fa-star-half-alt"></i>
+          {% else %}
+            <i class="far fa-star"></i>
+          {% endif %}
+        {% endfor %}
+        <span class="review-count">({{ reviewCount }} reviews)</span>
+      </div>
+
+      <p class="product-price-large">₦{{ single_product.price|floatformat:2 }}</p>
+
+      <!-- Stock -->
+      {% if single_product.stock > 0 %}
+        <span class="badge badge-success">IN STOCK</span>
+      {% else %}
+        <span class="badge badge-danger">OUT OF STOCK</span>
+      {% endif %}
+
+      <p class="product-description">{{ single_product.description }}</p>
+
+      <!-- Add to Cart Form -->
+      {% if single_product.stock > 0 %}
+        <form action="{% url 'add_cart' single_product.id %}" method="POST" class="add-to-cart-form">
+          {% csrf_token %}
+
+          <!-- Variations -->
+          {% if single_product.variation_set.colors %}
+            <div class="variation-group">
+              <label class="variation-label">COLOR</label>
+              <div class="variation-options">
+                {% for color in single_product.variation_set.colors %}
+                  <label class="variation-chip">
+                    <input type="radio" name="color" value="{{ color.variation_value }}" required>
+                    <span>{{ color.variation_value }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if single_product.variation_set.sizes %}
+            <div class="variation-group">
+              <label class="variation-label">SIZE</label>
+              <div class="variation-options">
+                {% for size in single_product.variation_set.sizes %}
+                  <label class="variation-chip">
+                    <input type="radio" name="size" value="{{ size.variation_value }}" required>
+                    <span>{{ size.variation_value }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-dark btn-full">
+            <i class="fas fa-shopping-bag"></i> ADD TO CART
+          </button>
+        </form>
+      {% endif %}
+
+      <!-- Meta -->
+      <div class="product-meta">
+        <p>Category: <a href="{% url 'products_by_category' single_product.category.slug %}">{{ single_product.category }}</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="reviews-section">
+  <div class="container">
+    <h2 class="section-title">CUSTOMER REVIEWS</h2>
+
+    <!-- Review Form -->
+    {% if is_ordered %}
+      <div class="review-form-wrap">
+        <h3>Leave a Review</h3>
+        <form action="{% url 'submit_review' single_product.id %}" method="POST" class="review-form">
+          {% csrf_token %}
+          <div class="rating-input">
+            <label>Your Rating</label>
+            <div class="star-selector">
+              {% for i in "54321" %}
+                <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}">
+                <label for="star{{ i }}"><i class="fas fa-star"></i></label>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="review">Your Review</label>
+            <textarea id="review" name="review" rows="4" class="form-input" placeholder="Share your experience..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-dark">SUBMIT REVIEW</button>
+        </form>
+      </div>
+    {% endif %}
+
+    <!-- Reviews List -->
+    <div class="reviews-list">
+      {% for review in reviews %}
+        <div class="review-card">
+          <div class="review-header">
+            <strong class="reviewer-name">{{ review.user.full_name }}</strong>
+            <div class="review-stars">
+              {% for i in "12345" %}
+                {% if forloop.counter <= review.rating %}
+                  <i class="fas fa-star"></i>
+                {% else %}
+                  <i class="far fa-star"></i>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
+          </div>
+          <p class="review-text">{{ review.review }}</p>
+        </div>
+      {% empty %}
+        <p class="no-reviews">No reviews yet. Be the first to review this product.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

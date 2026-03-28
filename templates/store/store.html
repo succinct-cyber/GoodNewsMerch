@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Shop | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<div class="store-layout">
+
+  <!-- Sidebar Filters -->
+  <aside class="store-sidebar">
+    <div class="filter-group">
+      <h3 class="filter-title">CATEGORIES</h3>
+      <ul class="filter-list">
+        <li>
+          <a href="{% url 'shop' %}" class="{% if not current_category %}active{% endif %}">
+            All Products ({{ products_count }})
+          </a>
+        </li>
+        {% for category in categories %}
+          <li>
+            <a href="{% url 'products_by_category' category.slug %}"
+               class="{% if current_category == category.slug %}active{% endif %}">
+              {{ category.category_name }}
+              ({{ category.product_set.count }})
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Products Area -->
+  <div class="store-main">
+
+    <!-- Results header -->
+    <div class="store-header">
+      {% if keyword %}
+        <p class="store-results">Showing results for "<strong>{{ keyword }}</strong>"</p> {{products_count}} result{{ products_count|pluralize }} found.
+      {% elif current_category %}
+        <p class="store-results">{{ current_category_name }}</p>
+      {% else %}
+        <p class="store-results">All Products ({{ products_count }})</p>
+      {% endif %}
+    </div>
+
+    <!-- Product Grid -->
+    <div class="products-grid">
+      {% for product in products %}
+        <div class="product-card">
+          <a href="{{ product.get_url }}" class="product-image-wrap">
+            <img src="{{ product.images.url }}" alt="{{ product.product_name }}" class="product-img">
+          </a>
+          <div class="product-info">
+            <a href="{{ product.get_url }}" class="product-name">{{ product.product_name }}</a>
+            <p class="product-desc">{{ product.description|truncatechars:60 }}</p>
+            <p class="product-price">₦{{ product.price|floatformat:2 }}</p>
+            <a href="{{ product.get_url }}" class="btn btn-outline btn-sm">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <p>No products found.</p>
+          <a href="{% url 'store' %}" class="btn btn-dark">View All Products</a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+      <div class="pagination">
+        {% if products.has_previous %}
+          <a href="?page={{ products.previous_page_number }}" class="page-btn">&larr; Prev</a>
+        {% endif %}
+        {% for num in products.paginator.page_range %}
+          <a href="?page={{ num }}" class="page-btn {% if products.number == num %}active{% endif %}">
+            {{ num }}
+          </a>
+        {% endfor %}
+        {% if products.has_next %}
+          <a href="?page={{ products.next_page_number }}" class="page-btn">Next &rarr;</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div><!-- end store-main -->
+</div><!-- end store-layout -->
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% load static %}
+
+<nav class="navbar">
+  <div class="navbar-inner">
+
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="navbar-logo">
+      <img src="{% static 'images/logos/goodnews merch logo.svg' %}" alt="GoodNews Merch" class="logo-img">
+    </a>
+
+    <!-- Nav Links -->
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">HOME</a></li>
+      <li><a href="{% url 'shop' %}" class="{% if request.path == '/shop/' %}active{% endif %}">SHOP</a></li>
+      <li><a href="#" class="{% if request.path == '/fundraising/' %}active{% endif %}">FUNDRAISING</a></li>
+      <li><a href="#" class="{% if request.path == '/contact/' %}active{% endif %}">CONTACT</a></li>
+    </ul>
+
+    <!-- Right Icons -->
+    <div class="navbar-icons">
+      <!-- User -->
+      {% if request.user.is_authenticated %}
+        <div class="nav-icon-wrap user-dropdown-wrap">
+          <a href="{#}" class="nav-icon" title="My Account">
+            <i class="fas fa-user"></i>
+          </a>
+        </div>
+      {% else %}
+        <a href="{#}" class="nav-icon" title="Login">
+          <i class="fas fa-user"></i>
+        </a>
+      {% endif %}
+
+      <!-- Search -->
+      <div class="search-container">
+    <button id="search-toggle">
+      <i class="fas fa-search"></i>
+    </button>
+
+    <form action="{% url 'search' %}" method="GET" id="search-form">
+        <input 
+            type="text" 
+            name="keyword" 
+            placeholder="Search products..." 
+            id="search-input"
+        >
+    </form>
+</div>
+
+      <!-- Cart -->
+      <a href="{% url 'cart' %}" class="nav-icon cart-icon" title="Cart">
+        <i class="fas fa-shopping-bag"></i>
+        
+        {% if cart_count > 0 %}
+          <span class="cart-badge">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="{% url 'home' %}">HOME</a></li>
+      <li><a href="{% url 'shop' %}">SHOP</a></li>
+      <li><a href="{#}">FUNDRAISING</a></li>
+      <li><a href="#">CONTACT</a></li>
+      {% if request.user.is_authenticated %}
+        <li><a href="{#}">MY ACCOUNT</a></li>
+        <li><a href="{#}">LOGOUT</a></li>
+      {% else %}
+        <li><a href="{#}">LOGIN</a></li>
+        <li><a href="{#}">REGISTER</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+
+
+
+<!-- search toggle script -->
+<script>
+    const toggleBtn = document.getElementById('search-toggle');
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+
+    toggleBtn.addEventListener('click', () => {
+        searchForm.classList.toggle('active');
+
+        // Auto focus when opened
+        if (searchForm.classList.contains('active')) {
+            searchInput.focus();
+        }
+    });
+</script>
