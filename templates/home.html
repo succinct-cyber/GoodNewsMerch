@@ -16,8 +16,8 @@
 
       <p class="hero-sub"> Wear your faith comfortably and in style.</p>
       
-      <a href="{#}" class="btn btn-dark">SHOP THE DROP</a>
-      <a href="{#}" class="btn btn-outline">VIEW LOOKBOOK</a>
+      <a href="#" class="btn btn-dark">SHOP THE DROP</a>
+      <a href="#" class="btn btn-outline">VIEW LOOKBOOK</a>
     </div>
     <div class="hero-image">
       <img src="{% static 'images/items/Recreate_the_exact_202603201111 (1) 2.png' %}" alt="GoodNews Merch Hero" class="hero-img">
@@ -28,14 +28,15 @@
 
 <!-- Fundraising banner -->
 
+<!-- home.html — NO full-bleed wrapper needed -->
 <section class="fundraising-banner-section">
   <div class="fundraising-banner-wrap">
-    <img src="{% static 'images/banners/FUND RAISING BANNER (2).png' %}"
+    <img src="{% static 'images/banners/FUND_RAISING_BANNER.png' %}"
          alt="Fundraising banner"
          class="fundraising-banner-img">
-    <a href="#" class="banner-btn">
-      PROCEED
-    </a>
+    <div class="banner-overlay">
+      <a href="#" class="banner-btn">PROCEED</a>
+    </div>
   </div>
 </section>
 

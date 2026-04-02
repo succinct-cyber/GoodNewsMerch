@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+  <div class="container">
+    <div class="dashboard-layout">
+
+      {% include 'includes/dashboard_sidebar.html' %}
+
+      <div class="dashboard-main">
+        <h1 class="dashboard-title">MY ORDERS</h1>
+
+        {% if orders %}
+          <div class="orders-wrap">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>ORDER #</th>
+                  <th>DATE</th>
+                  <th>ITEMS</th>
+                  <th>TOTAL</th>
+                  <th>STATUS</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                  <tr>
+                    <td class="order-num">{{ order.order_number }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>{{ order.orderproduct_set.count }}</td>
+                    <td>₦{{ order.order_total|floatformat:2 }}</td>
+                    <td>
+                      <span class="order-status status-{{ order.status|lower }}">
+                        {{ order.status }}
+                      </span>
+                    </td>
+                    <td>
+                      <a href="{% url 'order_detail' order.order_number %}" class="table-link">
+                        Details &rarr;
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>You have no orders yet.</p>
+            <a href="{% url 'shop' %}" class="btn btn-dark">SHOP NOW</a>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

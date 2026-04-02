@@ -18,6 +18,8 @@
     <div class="auth-right">
       <div class="auth-form-wrap">
 
+        {% include 'includes/alerts.html' %}
+
         <form action="{% url 'register' %}" method="POST" class="auth-form">
           {% csrf_token %}
 

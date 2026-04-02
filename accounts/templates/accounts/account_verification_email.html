@@ -35,16 +35,25 @@
         Please verify your email address to activate your account and start shopping.
       </p>
 
-      <a href="{{ current_site }}{% url 'activate' uidb64 token %}" class="verify-btn">
-        VERIFY MY ACCOUNT
+
+      {% with verify_url="http://"|add:domain|add:"/accounts/activate/"|add:uid|add:"/"|add:token|add:"/" %}
+
+      <a href="{{ verify_url }}" class="verify-btn"
+          style="display:inline-block; padding:16px 40px; background:#0A0A0A;
+          color:#ffffff; text-decoration:none; font-size:13px;
+          letter-spacing:2px; font-weight:700;">
+  VERIFY MY ACCOUNT
       </a>
 
       <p class="expiry-note">This link expires in 24 hours.</p>
 
       <p class="url-fallback">
         If the button doesn't work, copy and paste this link into your browser:<br>
-        {{ current_site }}{% url 'activate' uidb64 token %}
+        {{ current_site }}{% url 'activate' uid token %}
       </p>
+
+      {% endwith %}
+      
     </div>
 
     <div class="email-footer">

@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
 
 class MyAccountManager(BaseUserManager):
     def create_user(self, first_name, last_name, username, email, password=None):
@@ -85,5 +88,14 @@ class UserProfile(models.Model):
 
     def full_address(self):
         return f'{self.address_line_1} {self.address_line_2}'
+    
+
+@receiver(pre_delete, sender=Account)
+def delete_user_profile(sender, instance, **kwargs):
+    
+    try:
+        instance.userprofile.delete()
+    except UserProfile.DoesNotExist:
+        pass
 
 # Create your models here.

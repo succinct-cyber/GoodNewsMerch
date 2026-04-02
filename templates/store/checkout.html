@@ -16,7 +16,7 @@
       <div class="checkout-form-wrap">
         <h2 class="checkout-section-title">DELIVERY INFORMATION</h2>
 
-        <form action="#" method="POST" id="checkoutForm">
+        <form action="{% url 'payments' %}" method="POST" id="checkoutForm">
           {% csrf_token %}
 
           <div class="form-row">
@@ -75,9 +75,9 @@
                       placeholder="Any special instructions for your order..."></textarea>
           </div>
 
-          <button type="submit" class="btn btn-dark btn-full">
+          <a href="{% url 'payments' %}" class="btn btn-dark btn-full summary-checkout">
             PROCEED TO PAYMENT &rarr;
-          </button>
+          </a>
         </form>
       </div>
 

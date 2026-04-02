@@ -11,92 +11,108 @@
     <!-- Nav Links -->
     <ul class="nav-links">
       <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">HOME</a></li>
-      <li><a href="{% url 'shop' %}" class="{% if request.path == '/shop/' %}active{% endif %}">SHOP</a></li>
-      <li><a href="#" class="{% if request.path == '/fundraising/' %}active{% endif %}">FUNDRAISING</a></li>
-      <li><a href="#" class="{% if request.path == '/contact/' %}active{% endif %}">CONTACT</a></li>
+      <li><a href="{% url 'shop' %}" class="{% if 'shop' in request.path %}active{% endif %}">SHOP</a></li>
+      <li><a href="#">FUNDRAISING</a></li>
+      <li><a href="#">CONTACT</a></li>
     </ul>
 
     <!-- Right Icons -->
     <div class="navbar-icons">
-      <!-- User -->
-      {% if request.user.is_authenticated %}
-        <div class="nav-icon-wrap user-dropdown-wrap">
-          <a href="{#}" class="nav-icon" title="My Account">
-            <i class="fas fa-user"></i>
-          </a>
-        </div>
-      {% else %}
-        <a href="{#}" class="nav-icon" title="Login">
+
+      <!-- User Dropdown -->
+      <div class="nav-user-wrap">
+        <button class="nav-icon user-icon-btn" id="userIconBtn">
           <i class="fas fa-user"></i>
-        </a>
-      {% endif %}
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="dropdown-item">
+              <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a href="{% url 'logout' %}" class="dropdown-item dropdown-logout">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          {% else %}
+            <a href="{% url 'login' %}" class="dropdown-item">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="{% url 'register' %}" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> Register
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <!-- ↑ user-wrap closes here, NOT after search/cart -->
 
       <!-- Search -->
       <div class="search-container">
-    <button id="search-toggle">
-      <i class="fas fa-search"></i>
-    </button>
-
-    <form action="{% url 'search' %}" method="GET" id="search-form">
-        <input 
-            type="text" 
-            name="keyword" 
-            placeholder="Search products..." 
-            id="search-input"
-        >
-    </form>
-</div>
+        <button id="search-toggle" class="nav-icon">
+          <i class="fas fa-search"></i>
+        </button>
+        <form action="{% url 'search' %}" method="GET" id="search-form">
+          <input type="text" name="keyword" placeholder="Search products..." id="search-input">
+        </form>
+      </div>
 
       <!-- Cart -->
-      <a href="{% url 'cart' %}" class="nav-icon cart-icon" title="Cart">
+      <a href="{% url 'cart' %}" class="nav-icon cart-icon">
         <i class="fas fa-shopping-bag"></i>
-        
         {% if cart_count > 0 %}
           <span class="cart-badge">{{ cart_count }}</span>
         {% endif %}
       </a>
 
-      <!-- Mobile Menu Toggle -->
+      <!-- Hamburger -->
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
-    </div>
 
+    </div>
   </div>
 
-  <!-- Mobile Drawer -->
+  <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
     <ul>
       <li><a href="{% url 'home' %}">HOME</a></li>
       <li><a href="{% url 'shop' %}">SHOP</a></li>
-      <li><a href="{#}">FUNDRAISING</a></li>
+      <li><a href="#">FUNDRAISING</a></li>
       <li><a href="#">CONTACT</a></li>
       {% if request.user.is_authenticated %}
-        <li><a href="{#}">MY ACCOUNT</a></li>
-        <li><a href="{#}">LOGOUT</a></li>
+        <li><a href="{% url 'dashboard' %}">MY ACCOUNT</a></li>
+        <li><a href="{% url 'logout' %}">LOGOUT</a></li>
       {% else %}
-        <li><a href="{#}">LOGIN</a></li>
-        <li><a href="{#}">REGISTER</a></li>
+        <li><a href="{% url 'login' %}">LOGIN</a></li>
+        <li><a href="{% url 'register' %}">REGISTER</a></li>
       {% endif %}
     </ul>
   </div>
 </nav>
 
-
-
-
-<!-- search toggle script -->
 <script>
-    const toggleBtn = document.getElementById('search-toggle');
-    const searchForm = document.getElementById('search-form');
-    const searchInput = document.getElementById('search-input');
+  // Search toggle
+  document.getElementById('search-toggle').addEventListener('click', () => {
+    const form = document.getElementById('search-form');
+    form.classList.toggle('active');
+    if (form.classList.contains('active')) {
+      document.getElementById('search-input').focus();
+    }
+  });
 
-    toggleBtn.addEventListener('click', () => {
-        searchForm.classList.toggle('active');
+  // User dropdown
+  document.getElementById('userIconBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('userDropdown').classList.toggle('open');
+  });
 
-        // Auto focus when opened
-        if (searchForm.classList.contains('active')) {
-            searchInput.focus();
-        }
-    });
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-user-wrap')) {
+      document.getElementById('userDropdown').classList.remove('open');
+    }
+  });
+
+  // Hamburger
+  document.getElementById('hamburger').addEventListener('click', function() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
 </script>

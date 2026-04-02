@@ -35,6 +35,8 @@ EMAIL_HOST_USER     = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL  = config('EMAIL_HOST_USER')
 
+SENDGRID_API_KEY = config('SENDGRID_API_KEY')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 # ── Paystack ──────────────────────────────────────────────────
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
@@ -75,7 +77,7 @@ CSRF_TRUSTED_ORIGINS = ['http://192.168.1.5:8000']
 
 SESSION_EXPIRE_SECONDS = 3600  # 1 hour
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-SESSION_TIMEOUT_REDIRECT = 'accounts/login/'  # Redirect to login page after session expires
+SESSION_TIMEOUT_REDIRECT = 'login'  # Redirect to login page after session expires
 
 
 ROOT_URLCONF = 'goodnews_merch.urls'

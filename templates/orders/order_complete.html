@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmed | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<section class="order-complete-section">
+  <div class="container container-narrow">
+
+    <div class="order-complete-card">
+      <div class="order-complete-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+
+      <h1 class="order-complete-title">ORDER CONFIRMED!</h1>
+      <p class="order-complete-sub">
+        Thank you, <strong>{{ order.first_name }}</strong>! Your order has been placed successfully.
+      </p>
+
+      <div class="order-ref">
+        <p>Order Number</p>
+        <h2>{{ order.order_number }}</h2>
+      </div>
+
+      <!-- Order Items -->
+      <div class="order-items-summary">
+        <h3>ITEMS ORDERED</h3>
+        {% for item in ordered_products %}
+          <div class="order-item-row">
+            <div class="order-item-info">
+              <p class="order-item-name">{{ item.product.product_name }}</p>
+              {% if item.variations.all %}
+                <p class="order-item-vars">
+                  {% for v in item.variations.all %}{{ v.variation_value }}{% if not forloop.last %} / {% endif %}{% endfor %}
+                </p>
+              {% endif %}
+              <p class="order-item-qty">Qty: {{ item.quantity }}</p>
+            </div>
+            <p class="order-item-price">₦{{ item.product_price|floatformat:2 }}</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Order Total -->
+      <div class="order-complete-totals">
+        <div class="summary-row"><span>Subtotal</span><span>₦{{ subtotal|floatformat:2 }}</span></div>
+        <div class="summary-row"><span>Tax</span><span>₦{{ order.tax|floatformat:2 }}</span></div>
+        <div class="summary-total">
+          <span>TOTAL PAID</span>
+          <span>₦{{ order.order_total|floatformat:2 }}</span>
+        </div>
+      </div>
+
+      <!-- Delivery Info -->
+      <div class="order-delivery-info">
+        <h3>DELIVERY ADDRESS</h3>
+        <p>{{ order.address_line_1 }}{% if order.address_line_2 %}, {{ order.address_line_2 }}{% endif %}</p>
+        <p>{{ order.city }}, {{ order.state }}, {{ order.country }}</p>
+      </div>
+
+      <p class="order-email-note">
+        A confirmation email has been sent to <strong>{{ order.email }}</strong>.
+      </p>
+
+      <div class="order-complete-actions">
+        <a href="{% url 'my_orders' %}" class="btn btn-outline">VIEW MY ORDERS</a>
+        <a href="{% url 'shop' %}" class="btn btn-dark">CONTINUE SHOPPING</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

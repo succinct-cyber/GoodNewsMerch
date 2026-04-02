@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order {{ order.order_number }} | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+  <div class="container">
+    <div class="dashboard-layout">
+
+      {% include 'includes/dashboard_sidebar.html' %}
+
+      <div class="dashboard-main">
+
+        <div class="order-detail-header">
+          <div>
+            <h1 class="dashboard-title">ORDER DETAILS</h1>
+            <p class="order-detail-num">Order #{{ order.order_number }}</p>
+          </div>
+          <span class="order-status status-{{ order.status|lower }}">{{ order.status }}</span>
+        </div>
+
+        <div class="order-detail-layout">
+
+          <!-- Items -->
+          <div class="order-detail-items">
+            <h3 class="od-section-title">ITEMS</h3>
+            {% for item in ordered_products %}
+              <div class="od-item">
+                <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}" class="od-item-img">
+                <div class="od-item-info">
+                  <p class="od-item-name">{{ item.product.product_name }}</p>
+                  {% for v in item.variations.all %}
+                    <p class="od-item-var">{{ v.variation_category }}: {{ v.variation_value }}</p>
+                  {% endfor %}
+                  <p class="od-item-qty">Qty: {{ item.quantity }}</p>
+                </div>
+                <p class="od-item-price">₦{{ item.product_price|floatformat:2 }}</p>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Summary + Address -->
+          <div class="order-detail-sidebar">
+
+            <div class="od-card">
+              <h3 class="od-section-title">ORDER SUMMARY</h3>
+              <div class="summary-row"><span>Subtotal</span><span>₦{{ subtotal|floatformat:2 }}</span></div>
+              <div class="summary-row"><span>Tax</span><span>₦{{ order.tax|floatformat:2 }}</span></div>
+              <div class="summary-total">
+                <span>TOTAL</span>
+                <span>₦{{ order.order_total|floatformat:2 }}</span>
+              </div>
+            </div>
+
+            <div class="od-card">
+              <h3 class="od-section-title">DELIVERY ADDRESS</h3>
+              <p>{{ order.full_name }}</p>
+              <p>{{ order.address_line_1 }}</p>
+              {% if order.address_line_2 %}<p>{{ order.address_line_2 }}</p>{% endif %}
+              <p>{{ order.city }}, {{ order.state }}</p>
+              <p>{{ order.country }}</p>
+              <p>{{ order.phone }}</p>
+            </div>
+
+            <div class="od-card">
+              <h3 class="od-section-title">PAYMENT</h3>
+              <div class="summary-row">
+                <span>Method</span>
+                <span>{{ order.payment.payment_method }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Status</span>
+                <span class="badge badge-success">{{ order.payment.status }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Date</span>
+                <span>{{ order.payment.created_at|date:"M d, Y" }}</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <a href="{% url 'my_orders' %}" class="btn btn-outline">&larr; Back to Orders</a>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
