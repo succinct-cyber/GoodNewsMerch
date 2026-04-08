@@ -28,6 +28,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
+    path('fundraising/', views.fundraising, name='fundraising'),
+    path('contact/', views.contact, name='contact'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

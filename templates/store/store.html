@@ -14,7 +14,7 @@
       <ul class="filter-list">
         <li>
           <a href="{% url 'shop' %}" class="{% if not current_category %}active{% endif %}">
-            All Products ({{ products_count }})
+            All Categories ({{ category_count }})
           </a>
         </li>
         {% for category in categories %}
@@ -64,7 +64,7 @@
         <div class="empty-state">
           <i class="fas fa-box-open"></i>
           <p>No products found.</p>
-          <a href="{% url 'store' %}" class="btn btn-dark">View All Products</a>
+          <a href="{% url 'shop' %}" class="btn btn-dark">View All Products</a>
         </div>
       {% endfor %}
     </div>

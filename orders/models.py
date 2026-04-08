@@ -1,7 +1,13 @@
 from django.db import models
 
+
 class Payment(models.Model):
-    user = models.ForeignKey('accounts.Account', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'accounts.Account',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     payment_id = models.CharField(max_length=100)
     payment_method = models.CharField(max_length=100)
     amount_paid = models.CharField(max_length=100)
@@ -10,7 +16,8 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.payment_id
-    
+
+
 class Order(models.Model):
     STATUS = (
         ('New', 'New'),
@@ -18,7 +25,12 @@ class Order(models.Model):
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
     )
-    user = models.ForeignKey('accounts.Account', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'accounts.Account',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=50)
@@ -41,17 +53,23 @@ class Order(models.Model):
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
-    
+
     def full_address(self):
         return f'{self.address_line_1} {self.address_line_2}'
 
     def __str__(self):
         return self.first_name
-        
+
+
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
-    user = models.ForeignKey('accounts.Account', on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        'accounts.Account',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     product = models.ForeignKey('store.Product', on_delete=models.CASCADE)
     variations = models.ManyToManyField('store.Variation', blank=True)
     quantity = models.IntegerField()
@@ -62,8 +80,3 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.product.product_name
-
-# Create your models here.
-
-
-# Create your models here.

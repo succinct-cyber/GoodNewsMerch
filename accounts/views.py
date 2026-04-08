@@ -18,8 +18,12 @@ from django.core.mail import EmailMessage
 
 from cart.views import _cart_id
 from cart.models import Cart, CartItem
+import logging
+import smtplib
 import requests
 from accounts.models import UserProfile
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def register(request):
@@ -162,10 +166,19 @@ def activate(request, uidb64, token):
 
 @login_required(login_url='login')
 def dashboard(request):
-    orders       = Order.objects.order_by('-created_at').filter(
-                       user_id=request.user.id, is_ordered=True
-                   )
-    orders_count = orders.count()
+    base_orders = Order.objects.filter(
+        user_id=request.user.id,
+        is_ordered=True,
+    ).order_by('-created_at')
+
+    # Completed is determined by successful payment verification.
+    # (Paid orders were previously showing up as pending because order.status
+    # wasn't being set in the payment-success flow.)
+    completed_orders = base_orders.filter(payment__status='success').order_by('-created_at')
+    pending_orders = base_orders.exclude(payment__status='success').order_by('-created_at')
+    recent_orders = list(completed_orders) + list(pending_orders)
+
+    orders_count = base_orders.count()
 
     # get_or_create — never crashes if profile missing
     userprofile, created = UserProfile.objects.get_or_create(
@@ -175,6 +188,9 @@ def dashboard(request):
 
     context = {
         'orders_count': orders_count,
+        'completed_orders': completed_orders,
+        'pending_orders': pending_orders,
+        'recent_orders': recent_orders,
         'userprofile' : userprofile,
     }
     return render(request, 'accounts/dashboard.html', context)
@@ -198,13 +214,22 @@ def forgot_password(request):
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.content_subtype = 'html'
-            send_email.send()
+            try:
+                send_email.send()
+            except (TimeoutError, OSError, smtplib.SMTPException) as exc:
+                logger.warning('Password reset email failed: %s', exc, exc_info=True)
+                messages.error(
+                    request,
+                    'We could not reach the mail server to send the reset link. '
+                    'Check your internet connection, firewall, and EMAIL_* settings, then try again.',
+                )
+                return redirect('forgot_password')
 
             messages.success(request, 'Password reset email has been sent to your email address.')
             return redirect('login')
         else:
             messages.error(request, 'Account does not exist!')
-            return redirect('forgotPassword')
+            return redirect('forgot_password')
     return render(request, 'accounts/forgot-password.html')
 
 
@@ -224,7 +249,7 @@ def reset_password_confirm(request, uidb64, token):
             'uidb64': uidb64,
             'token': token,
         }
-        messages.error(request, 'This link has been expired!')
+        messages.error(request, 'This link is expired!')
         return redirect('login')
 
 
@@ -244,10 +269,10 @@ def reset_password(request, uidb64, token):
                 
             except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
                 messages.error(request, 'This link has been expired!')
-                return redirect('forgotPassword')
+                return redirect('forgot_password')
         else:
             messages.error(request, 'Password do not match!')
-            return redirect('reset_password')
+            return redirect('reset_password', uidb64=uidb64, token=token)
     else:
         context = {
             'uidb64': uidb64,
@@ -316,8 +341,15 @@ def change_password(request):
 
 @login_required(login_url='login')
 def order_details(request, order_id):
-    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
-    order = Order.objects.get(order_number=order_id)
+    order_detail = (
+        OrderProduct.objects.filter(
+            order__order_number=order_id,
+            order__user=request.user,
+        )
+        .select_related('product')
+        .prefetch_related('variations')
+    )
+    order = get_object_or_404(Order, order_number=order_id, user=request.user)
     subtotal = 0
     for i in order_detail:
         subtotal += i.product_price * i.quantity

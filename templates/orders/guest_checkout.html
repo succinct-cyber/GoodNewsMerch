@@ -12,22 +12,24 @@
 
     <div class="checkout-layout">
 
-      <!-- Billing Form -->
+      <!-- Delivery Form -->
       <div class="checkout-form-wrap">
         <h2 class="checkout-section-title">DELIVERY INFORMATION</h2>
 
-        <form action="{% url 'place_order' %}" method="POST" id="checkoutForm">
+        <form action="{% url 'guest_place_order' %}" method="POST">
           {% csrf_token %}
 
           <div class="form-row">
             <div class="form-group">
               <label>First Name</label>
-              <input type="text" name="first_name" value="{{ request.user.first_name }}"
+              <input type="text" name="first_name"
+                     value="{{ request.user.first_name }}"
                      class="form-input" required>
             </div>
             <div class="form-group">
               <label>Last Name</label>
-              <input type="text" name="last_name" value="{{ request.user.last_name }}"
+              <input type="text" name="last_name"
+                     value="{{ request.user.last_name }}"
                      class="form-input" required>
             </div>
           </div>
@@ -39,8 +41,10 @@
 
           <div class="form-group">
             <label>Email Address</label>
-            <input type="email" name="email" value="{{ request.user.email }}"
-                   class="form-input" required>
+            <input type="email" name="email"
+                   value="{{ request.user.email }}"
+                   class="form-input" required
+                   placeholder="We'll send your order confirmation here">
           </div>
 
           <div class="form-group">
@@ -66,16 +70,26 @@
 
           <div class="form-group">
             <label>Country</label>
-            <input type="text" name="country" value="Nigeria" class="form-input" required>
+            <input type="text" name="country" value="Nigeria"
+                   class="form-input" required>
           </div>
 
           <div class="form-group">
             <label>Order Notes (optional)</label>
             <textarea name="order_note" rows="3" class="form-input"
-                      placeholder="Any special instructions for your order..."></textarea>
+                      placeholder="Any special instructions..."></textarea>
           </div>
 
-          <button type="submit" class="btn btn-dark btn-full summary-checkout">
+          {% if not request.user.is_authenticated %}
+            <p class="guest-note">
+              <i class="fas fa-info-circle"></i>
+              Shopping as guest. <a href="{% url 'login' %}">Sign in</a>
+              or <a href="{% url 'register' %}">create an account</a>
+              to track orders easily.
+            </p>
+          {% endif %}
+
+          <button type="submit" class="btn btn-dark btn-full" style="margin-top:24px;">
             PROCEED TO PAYMENT &rarr;
           </button>
         </form>
@@ -90,16 +104,18 @@
             <div class="checkout-item">
               <div class="checkout-item-info">
                 {% if item.product.images %}
-                <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}" class="checkout-item-img">
+                  <img src="{{ item.product.images.url }}"
+                       alt="{{ item.product.product_name }}"
+                       class="checkout-item-img">
                 {% else %}
-                <div class="checkout-item-img" style="background:var(--color-card-bg);display:flex;align-items:center;justify-content:center;">
-                  <i class="fas fa-image" style="color:var(--color-border);font-size:20px;"></i>
-                </div>
+                  <div class="checkout-item-img" style="background:var(--color-card-bg);"></div>
                 {% endif %}
                 <div>
                   <p class="checkout-item-name">{{ item.product.product_name }}</p>
                   {% for v in item.variations.all %}
-                    <p class="checkout-item-var">{{ v.variation_category }}: {{ v.variation_value }}</p>
+                    <p class="checkout-item-var">
+                      {{ v.variation_category|capfirst }}: {{ v.variation_value }}
+                    </p>
                   {% endfor %}
                   <p class="checkout-item-qty">Qty: {{ item.quantity }}</p>
                 </div>
@@ -111,8 +127,14 @@
 
         <div class="summary-divider"></div>
 
-        <div class="summary-row"><span>Subtotal</span><span>₦{{ total|floatformat:2 }}</span></div>
-        <div class="summary-row"><span>Tax</span><span>₦{{ tax|floatformat:2 }}</span></div>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₦{{ total|floatformat:2 }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Tax (2%)</span>
+          <span>₦{{ tax|floatformat:2 }}</span>
+        </div>
         <div class="summary-total">
           <span>TOTAL</span>
           <span class="summary-total-amount">₦{{ grand_total|floatformat:2 }}</span>

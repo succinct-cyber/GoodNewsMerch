@@ -26,9 +26,15 @@
           <!-- Items -->
           <div class="order-detail-items">
             <h3 class="od-section-title">ITEMS</h3>
-            {% for item in ordered_products %}
+            {% for item in order_detail %}
               <div class="od-item">
-                <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}" class="od-item-img">
+                {% if item.product.images %}
+                  <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}" class="od-item-img">
+                {% else %}
+                  <div class="od-item-img od-item-img-placeholder" aria-hidden="true">
+                    <i class="fas fa-image"></i>
+                  </div>
+                {% endif %}
                 <div class="od-item-info">
                   <p class="od-item-name">{{ item.product.product_name }}</p>
                   {% for v in item.variations.all %}

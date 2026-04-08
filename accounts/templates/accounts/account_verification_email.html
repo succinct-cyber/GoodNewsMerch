@@ -13,7 +13,12 @@
     .verify-icon { font-size: 48px; margin-bottom: 24px; }
     .email-body h2 { font-size: 22px; font-weight: 700; letter-spacing: 2px; margin-bottom: 16px; }
     .email-body p { color: #474747; line-height: 1.7; font-size: 15px; margin-bottom: 32px; }
-    .verify-btn { display: inline-block; padding: 16px 40px; background: #0A0A0A; color: #fff; text-decoration: none; font-size: 13px; letter-spacing: 2px; font-weight: 700; }
+    .verify-btn {
+      display: inline-block; padding: 16px 40px;
+      background: #0A0A0A; color: #fff !important;
+      text-decoration: none; font-size: 13px;
+      letter-spacing: 2px; font-weight: 700;
+    }
     .expiry-note { margin-top: 32px; font-size: 13px; color: #6B7280; }
     .url-fallback { margin-top: 20px; font-size: 12px; color: #6B7280; word-break: break-all; }
     .email-footer { background: #F9F9F9; padding: 24px; text-align: center; border-top: 1px solid #E2E2E2; }
@@ -35,25 +40,21 @@
         Please verify your email address to activate your account and start shopping.
       </p>
 
-
       {% with verify_url="http://"|add:domain|add:"/accounts/activate/"|add:uid|add:"/"|add:token|add:"/" %}
 
-      <a href="{{ verify_url }}" class="verify-btn"
-          style="display:inline-block; padding:16px 40px; background:#0A0A0A;
-          color:#ffffff; text-decoration:none; font-size:13px;
-          letter-spacing:2px; font-weight:700;">
-  VERIFY MY ACCOUNT
-      </a>
+        <a href="{{ verify_url }}" class="verify-btn">
+          VERIFY MY ACCOUNT
+        </a>
 
-      <p class="expiry-note">This link expires in 24 hours.</p>
+        <p class="expiry-note">This link expires in 24 hours.</p>
 
-      <p class="url-fallback">
-        If the button doesn't work, copy and paste this link into your browser:<br>
-        {{ current_site }}{% url 'activate' uid token %}
-      </p>
+        <p class="url-fallback">
+          If the button doesn't work, copy and paste this link into your browser:<br>
+          <a href="{{ verify_url }}" style="color:#217EC4;">{{ verify_url }}</a>
+          <!-- ↑ verify_url is now used here, INSIDE the with block -->
+        </p>
 
       {% endwith %}
-      
     </div>
 
     <div class="email-footer">
@@ -61,7 +62,7 @@
         You received this email because you created an account on GoodNews Merch.<br>
         If you did not sign up, please ignore this email.
       </p>
-      <p style="margin-top: 8px;">&copy; {% now "Y" %} GoodNews Merch. All rights reserved.</p>
+      <p style="margin-top: 8px;">&copy; 2025 GoodNews Merch. All rights reserved.</p>
     </div>
 
   </div>

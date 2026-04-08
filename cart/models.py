@@ -19,8 +19,16 @@ class CartItem(models.Model):
     quantity = models.IntegerField()
     active = models.BooleanField(default=True)
 
+    def item_price(self):
+        """Base price + quality modifier if selected."""
+        price = self.product.price
+        for variation in self.variations.all():
+            if variation.variation_category == 'quality':
+                price += variation.price_modifier
+        return price
+
     def sub_total(self):
-        return self.product.price * self.quantity
+        return self.item_price() * self.quantity
     
     
     def unicode(self):

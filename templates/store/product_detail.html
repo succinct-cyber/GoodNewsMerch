@@ -5,161 +5,363 @@
 
 {% block content %}
 
-<!-- Breadcrumb -->
 <div class="breadcrumb-wrap">
   <div class="container">
     <a href="{% url 'home' %}">Home</a>
     <span>/</span>
     <a href="{% url 'shop' %}">Shop</a>
     <span>/</span>
-    <a href="{% url 'products_by_category' single_product.category.slug %}">{{ single_product.category }}</a>
+    <a href="{% url 'products_by_category' single_product.category.slug %}">{{ single_product.category.category_name }}</a>
     <span>/</span>
     <span>{{ single_product.product_name }}</span>
   </div>
 </div>
 
-<!-- Product Detail -->
 <section class="product-detail">
   <div class="product-detail-inner">
 
-    <!-- Product Images -->
-    <div class="product-gallery">
-      <div class="product-main-image">
-        <img src="{{ single_product.images.url }}" alt="{{ single_product.product_name }}" id="mainProductImage">
+    <!-- Gallery -->
+    <div class="product-gallery-wrap">
+      <div class="product-main-image" id="mainImageWrap">
+        {% if single_product.images %}
+          <img src="{{ single_product.images.url }}"
+               alt="{{ single_product.product_name }}"
+               id="mainProductImage">
+        {% else %}
+          <div class="product-img-placeholder">
+            <i class="fas fa-image fa-3x"></i>
+          </div>
+        {% endif %}
       </div>
+
+      {% if product_gallery %}
+        <div class="product-thumbnails">
+          {% if single_product.images %}
+            <div class="product-thumb active"
+                 onclick="switchImage(this, '{{ single_product.images.url }}')">
+              <img src="{{ single_product.images.url }}" alt="Main">
+            </div>
+          {% endif %}
+          {% for gallery_img in product_gallery %}
+            <div class="product-thumb"
+                 onclick="switchImage(this, '{{ gallery_img.image.url }}')">
+              <img src="{{ gallery_img.image.url }}" alt="{{ single_product.product_name }}">
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Product Info -->
     <div class="product-info-panel">
-      <p class="product-category">{{ single_product.category }}</p>
+      <p class="product-category">{{ single_product.category.category_name }}</p>
       <h1 class="product-title">{{ single_product.product_name }}</h1>
 
-      <!-- Rating -->
+      <!-- Inline star rating — no border, no section -->
       <div class="product-rating">
-        {% for i in "12345" %}
-          {% if forloop.counter <= single_product.averageReview %}
-            <i class="fas fa-star"></i>
-          {% elif forloop.counter|add:"-0.5" <= single_product.averageReview %}
-            <i class="fas fa-star-half-alt"></i>
-          {% else %}
-            <i class="far fa-star"></i>
-          {% endif %}
-        {% endfor %}
-        <span class="review-count">({{ reviewCount }} reviews)</span>
+        {% with rating=single_product.avgReview|default:0 %}
+          {% for i in "12345" %}
+            {% if forloop.counter <= rating %}
+              <i class="fas fa-star"></i>
+            {% elif forloop.counter == 1 and rating >= 0.5 %}
+              <i class="fas fa-star-half-alt"></i>
+            {% elif forloop.counter == 2 and rating >= 1.5 %}
+              <i class="fas fa-star-half-alt"></i>
+            {% elif forloop.counter == 3 and rating >= 2.5 %}
+              <i class="fas fa-star-half-alt"></i>
+            {% elif forloop.counter == 4 and rating >= 3.5 %}
+              <i class="fas fa-star-half-alt"></i>
+            {% elif forloop.counter == 5 and rating >= 4.5 %}
+              <i class="fas fa-star-half-alt"></i>
+            {% else %}
+              <i class="far fa-star"></i>
+            {% endif %}
+          {% endfor %}
+          <span class="review-count">({{ single_product.countReview }} review{{ single_product.countReview|pluralize }})</span>
+        {% endwith %}
       </div>
 
-      <p class="product-price-large">₦{{ single_product.price|floatformat:2 }}</p>
+      <p class="product-price-large" id="product-price-display"
+         data-base-price="{{ single_product.price }}">
+        ₦<span class="price-amount">{{ single_product.price|floatformat:2 }}</span>
+      </p>
 
-      <!-- Stock -->
-      {% if single_product.stock > 0 %}
-        <span class="badge badge-success">IN STOCK</span>
-      {% else %}
-        <span class="badge badge-danger">OUT OF STOCK</span>
+      {% if single_product.description %}
+        <div class="product-description">{{ single_product.description|linebreaks }}</div>
       {% endif %}
 
-      <p class="product-description">{{ single_product.description }}</p>
+      <form action="{% url 'add_cart' single_product.id %}"
+            method="POST"
+            class="add-to-cart-form"
+            id="productForm">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
 
-      <!-- Add to Cart Form -->
-      {% if single_product.stock > 0 %}
-        <form action="{% url 'add_cart' single_product.id %}" method="POST" class="add-to-cart-form">
-          {% csrf_token %}
-
-          <!-- Variations -->
-          {% if single_product.variation_set.colors %}
-            <div class="variation-group">
-              <label class="variation-label">COLOR</label>
-              <div class="variation-options">
-                {% for color in single_product.variation_set.colors %}
-                  <label class="variation-chip">
-                    <input type="radio" name="color" value="{{ color.variation_value }}" required>
-                    <span>{{ color.variation_value }}</span>
-                  </label>
-                {% endfor %}
-              </div>
-            </div>
-          {% endif %}
-
-          {% if single_product.variation_set.sizes %}
-            <div class="variation-group">
-              <label class="variation-label">SIZE</label>
-              <div class="variation-options">
-                {% for size in single_product.variation_set.sizes %}
-                  <label class="variation-chip">
-                    <input type="radio" name="size" value="{{ size.variation_value }}" required>
-                    <span>{{ size.variation_value }}</span>
-                  </label>
-                {% endfor %}
-              </div>
-            </div>
-          {% endif %}
-
-          <button type="submit" class="btn btn-dark btn-full">
-            <i class="fas fa-shopping-bag"></i> ADD TO CART
-          </button>
-        </form>
-      {% endif %}
-
-      <!-- Meta -->
-      <div class="product-meta">
-        <p>Category: <a href="{% url 'products_by_category' single_product.category.slug %}">{{ single_product.category }}</a></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Reviews -->
-<section class="reviews-section">
-  <div class="container">
-    <h2 class="section-title">CUSTOMER REVIEWS</h2>
-
-    <!-- Review Form -->
-    {% if is_ordered %}
-      <div class="review-form-wrap">
-        <h3>Leave a Review</h3>
-        <form action="{% url 'submit_review' single_product.id %}" method="POST" class="review-form">
-          {% csrf_token %}
-          <div class="rating-input">
-            <label>Your Rating</label>
-            <div class="star-selector">
-              {% for i in "54321" %}
-                <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}">
-                <label for="star{{ i }}"><i class="fas fa-star"></i></label>
+        {% if colors %}
+          <div class="variation-group">
+            <span class="variation-label">Color</span>
+            <div class="variation-options">
+              {% for color in colors %}
+                <label class="variation-chip">
+                  <input type="radio" name="color"
+                         value="{{ color.variation_value }}" required>
+                  <span>{{ color.variation_value|title }}</span>
+                </label>
               {% endfor %}
             </div>
           </div>
-          <div class="form-group">
-            <label for="review">Your Review</label>
-            <textarea id="review" name="review" rows="4" class="form-input" placeholder="Share your experience..."></textarea>
+        {% endif %}
+
+        {% if sizes %}
+          <div class="variation-group">
+            <span class="variation-label">Size</span>
+            <div class="variation-options">
+              {% for size in sizes %}
+                <label class="variation-chip">
+                  <input type="radio" name="size"F
+                         value="{{ size.variation_value }}" required>
+                  <span>{{ size.variation_value|upper }}</span>
+                </label>
+              {% endfor %}
+            </div>
           </div>
-          <button type="submit" class="btn btn-dark">SUBMIT REVIEW</button>
-        </form>
+        {% endif %}
+
+        {% if qualities %}
+          <div class="variation-group">
+            <span class="variation-label">Quality</span>
+            <div class="variation-options">
+              {% for quality in qualities %}
+                <label class="variation-chip">
+                  <input type="radio" name="quality"
+                         value="{{ quality.variation_value }}" required
+                         data-modifier="{{ quality.price_modifier }}">
+                  <span>{{ quality.variation_value|title }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="product-actions">
+          {% if user.is_authenticated %}
+            <button type="submit" class="btn btn-outline btn-full"
+                    formaction="{% url 'add_cart' single_product.id %}">
+              <i class="fas fa-shopping-bag"></i> Add to cart
+            </button>
+          {% else %}
+            <a href="{% url 'login' %}?next={{ request.path|urlencode }}"
+               class="btn btn-outline btn-full">
+              <i class="fas fa-shopping-bag"></i> Add to cart
+            </a>
+          {% endif %}
+          <button type="submit" class="btn btn-dark btn-full"
+                  formaction="{% url 'buy_now' single_product.id %}">
+            <i class="fas fa-bolt"></i> Buy now
+          </button>
+        </div>
+
+        {% if not user.is_authenticated %}
+          <p class="guest-note">
+            <i class="fas fa-info-circle"></i>
+            <span>
+              <strong>Buy now</strong> checks out as a guest.
+              To save items in your cart,
+              <a href="{% url 'login' %}?next={{ request.path|urlencode }}">sign in</a>.
+            </span>
+          </p>
+        {% endif %}
+      </form>
+
+      <div class="product-meta">
+        {% if single_product.stock > 0 %}
+          <p>
+            <i class="fas fa-check-circle" style="color:var(--color-accent);"></i>
+            In stock ({{ single_product.stock }} available)
+          </p>
+        {% else %}
+          <p>Currently out of stock.</p>
+        {% endif %}
       </div>
-    {% endif %}
+    </div>
+
+  </div><!-- end product-detail-inner -->
+</section><!-- end product-detail -->
+
+
+<!-- ══ Reviews — outside the grid ══════════════════════════════ -->
+<section class="reviews-section">
+  <div class="reviews-inner">
+
+    <!-- Write a Review -->
+    <div class="write-review-wrap">
+      <form action="{% url 'submit_review' single_product.id %}"
+            method="POST" class="review-form">
+        {% csrf_token %}
+        <h3 class="write-review-title">WRITE A REVIEW</h3>
+
+        <!-- ★ Half-star enabled via overlapping labels technique -->
+        <div class="form-group">
+          <label class="form-label">YOUR RATING</label>
+          <div class="rating">
+              <input type="radio" id="star10" name="rating" value="5" required><label for="star10" title="5"></label>
+              <input type="radio" id="star9" name="rating" value="4.5" required><label for="star9" title="4.5" class="half"></label>
+              <input type="radio" id="star8" name="rating" value="4" required><label for="star8" title="4"></label>
+              <input type="radio" id="star7" name="rating" value="3.5" required><label for="star7" title="3.5" class="half"></label>
+              <input type="radio" id="star6" name="rating" value="3" required><label for="star6" title="3"></label>
+              <input type="radio" id="star5" name="rating" value="2.5" required><label for="star5" title="2.5" class="half"></label>
+              <input type="radio" id="star4" name="rating" value="2" required><label for="star4" title="2"></label>
+              <input type="radio" id="star3" name="rating" value="1.5" required><label for="star3" title="1.5" class="half"></label>
+              <input type="radio" id="star2" name="rating" value="1" required><label for="star2" title="1"></label>
+              <input type="radio" id="star1" name="rating" value="0.5" required><label for="star1" title="0.5" class="half"></label>
+          </div>
+        </div><!-- ← form-group correctly closed -->
+
+        <div class="form-group">
+          <label class="form-label">REVIEW TITLE</label>
+          <input type="text" name="subject" class="form-input"
+                 placeholder="Summarise your experience">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">REVIEW</label>
+          <textarea name="review" rows="4" class="form-input"
+                    placeholder="Tell others what you think..."></textarea>
+        </div>
+
+        {% if request.user.is_authenticated %}
+          {% if is_ordered %}
+            <button type="submit" class="btn btn-dark">SUBMIT REVIEW</button>
+          {% else %}
+            <p class="review-gate-msg">
+              <i class="fas fa-lock"></i>
+              Purchase this product to leave a review.
+            </p>
+          {% endif %}
+        {% else %}
+          <p class="review-gate-msg">
+            <i class="fas fa-user"></i>
+            Please <a href="{% url 'login' %}">login</a> to submit a review.
+          </p>
+        {% endif %}
+
+      </form>
+    </div>
 
     <!-- Reviews List -->
-    <div class="reviews-list">
+    <div class="reviews-list-wrap">
+      <div class="reviews-list-header">
+        <h3 class="reviews-list-title">CUSTOMER REVIEWS</h3>
+        <div class="reviews-avg-stars">
+          {% for i in "12345" %}
+            {% if forloop.counter <= avg_rating %}
+              <i class="fas fa-star"></i>
+            {% elif forloop.counter|add:"-1" < avg_rating %}
+              <i class="fas fa-star-half-alt"></i>
+            {% else %}
+              <i class="far fa-star"></i>
+            {% endif %}
+          {% endfor %}
+          <span class="reviews-count">
+            ({{ review_count }} review{{ review_count|pluralize }})
+          </span>
+        </div>
+      </div>
+
       {% for review in reviews %}
         <div class="review-card">
-          <div class="review-header">
-            <strong class="reviewer-name">{{ review.user.full_name }}</strong>
+          <div class="review-card-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">
+                {{ review.user.first_name|first|upper }}
+              </div>
+              <div>
+                <p class="reviewer-name">
+                  {{ review.user.first_name }} {{ review.user.last_name }}
+                </p>
+                <p class="review-date">{{ review.updated_at|date:"M d, Y" }}</p>
+              </div>
+            </div>
+            <!-- Whole+half stars based on stored rating -->
             <div class="review-stars">
               {% for i in "12345" %}
                 {% if forloop.counter <= review.rating %}
                   <i class="fas fa-star"></i>
+                {% elif forloop.counter|add:"-0.5" <= review.rating %}
+                  <i class="fas fa-star-half-alt"></i>
                 {% else %}
                   <i class="far fa-star"></i>
                 {% endif %}
               {% endfor %}
             </div>
-            <span class="review-date">{{ review.created_at|date:"M d, Y" }}</span>
           </div>
-          <p class="review-text">{{ review.review }}</p>
+          {% if review.subject %}
+            <p class="review-subject">{{ review.subject }}</p>
+          {% endif %}
+          <p class="review-body">{{ review.review }}</p>
         </div>
       {% empty %}
-        <p class="no-reviews">No reviews yet. Be the first to review this product.</p>
+        <div class="no-reviews">
+          <i class="far fa-comment-dots"></i>
+          <p>No reviews yet. Be the first to review this product.</p>
+        </div>
       {% endfor %}
     </div>
+
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchImage(thumb, url) {
+  document.getElementById('mainProductImage').src = url;
+  document.querySelectorAll('.product-thumb').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  thumb.classList.add('active');
+}
+
+(function () {
+  const form         = document.getElementById('productForm');
+  const priceDisplay = document.getElementById('product-price-display');
+  const priceAmount  = priceDisplay ? priceDisplay.querySelector('.price-amount') : null;
+
+  function formatMoney(n) {
+    const v = Number(n);
+    if (Number.isNaN(v)) return '0.00';
+    return v.toLocaleString('en-NG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function updatePriceFromQuality() {
+    if (!priceDisplay || !priceAmount) return;
+    const base    = parseFloat(priceDisplay.getAttribute('data-base-price')) || 0;
+    const checked = form.querySelector('input[name="quality"]:checked');
+    const mod     = checked ? (parseFloat(checked.getAttribute('data-modifier')) || 0) : 0;
+    priceAmount.textContent = formatMoney(base + mod);
+  }
+
+  form.querySelectorAll('input[name="quality"]').forEach(function(el) {
+    el.addEventListener('change', updatePriceFromQuality);
+  });
+  updatePriceFromQuality();
+
+  form.addEventListener('submit', function(e) {
+    const radios = form.querySelectorAll('input[type="radio"]');
+    const groups = {};
+    radios.forEach(function(r) { groups[r.name] = false; });
+    radios.forEach(function(r) { if (r.checked) groups[r.name] = true; });
+    const allSelected = Object.keys(groups).length === 0 ||
+                        Object.values(groups).every(Boolean);
+    if (!allSelected) {
+      e.preventDefault();
+      alert('Please select all options before continuing.');
+    }
+  });
+})();
+</script>
 {% endblock %}

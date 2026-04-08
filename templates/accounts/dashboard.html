@@ -15,7 +15,7 @@
       <div class="dashboard-main">
         <h1 class="dashboard-title">DASHBOARD</h1>
         <p class="dashboard-welcome">
-          Welcome back, <strong>John</strong>
+          Welcome back, <strong>{{ request.user.first_name }}</strong>
         </p>
 
         <!-- Stats Cards -->
@@ -26,7 +26,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">Total Orders</p>
-              <h3 class="stat-value">5</h3>
+              <h3 class="stat-value">{{ orders_count }}</h3>
             </div>
           </div>
 
@@ -36,7 +36,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">Completed</p>
-              <h3 class="stat-value">3</h3>
+              <h3 class="stat-value">{{ completed_orders.count }}</h3>
             </div>
           </div>
 
@@ -46,7 +46,7 @@
             </div>
             <div class="stat-info">
               <p class="stat-label">Pending</p>
-              <h3 class="stat-value">2</h3>
+              <h3 class="stat-value">{{ pending_orders.count }}</h3>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
         <!-- Recent Orders -->
         <div class="dashboard-recent">
           <h2 class="dashboard-section-title">RECENT ORDERS</h2>
-          <!-- {% if orders %} -->
+          {% if orders_count > 0 %}
             <table class="orders-table">
               <thead>
                 <tr>
@@ -66,27 +66,27 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- {% for order in orders|slice:":5" %} -->
+                {% for order in recent_orders|slice:":5" %}
                   <tr>
-                    <td>12345678</td>
-                    <td>03/28/2026</td>
-                    <td>₦565748</td>
+                    <td class="order-num">{{ order.order_number }}</td>
+                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                    <td>₦{{ order.order_total|floatformat:2 }}</td>
                     <td>
                       <span class="order-status status-{{ order.status|lower }}">
-                        Success
+                        {{ order.status }}
                       </span>
                     </td>
                     <td>
-                      <a href="#" class="table-link">
-                        View &rarr;
+                      <a href="{% url 'order_details' order.order_number %}" class="table-link">
+                        Details &rarr;
                       </a>
                     </td>
                   </tr>
                 {% endfor %}
               </tbody>
             </table>
-            {% if orders.count > 5 %}
-              <a href="#" class="btn btn-outline" style="margin-top: 16px;">
+            {% if orders_count > 5 %}
+              <a href="{% url 'my_orders' %}" class="btn btn-outline" style="margin-top: 16px;">
                 View All Orders
               </a>
             {% endif %}

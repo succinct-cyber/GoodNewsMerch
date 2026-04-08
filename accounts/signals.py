@@ -5,6 +5,9 @@ from .models import Account, UserProfile
 @receiver(pre_delete, sender=Account)
 def delete_user_profile(sender, instance, **kwargs):
     try:
-        instance.userprofile.delete()
+        profile = instance.userprofile
+        # Only delete if it actually exists in the database
+        if profile.pk is not None:
+            profile.delete()
     except UserProfile.DoesNotExist:
         pass

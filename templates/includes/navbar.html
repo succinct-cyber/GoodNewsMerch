@@ -12,8 +12,8 @@
     <ul class="nav-links">
       <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">HOME</a></li>
       <li><a href="{% url 'shop' %}" class="{% if 'shop' in request.path %}active{% endif %}">SHOP</a></li>
-      <li><a href="#">FUNDRAISING</a></li>
-      <li><a href="#">CONTACT</a></li>
+      <li><a href="{% url 'fundraising' %}" class="{% if 'fundraising' in request.path %}active{% endif %}">FUNDRAISING</a></li>
+      <li><a href="{% url 'contact' %}" class="{% if 'contact' in request.path %}active{% endif %}">CONTACT</a></li>
     </ul>
 
     <!-- Right Icons -->
@@ -75,8 +75,8 @@
     <ul>
       <li><a href="{% url 'home' %}">HOME</a></li>
       <li><a href="{% url 'shop' %}">SHOP</a></li>
-      <li><a href="#">FUNDRAISING</a></li>
-      <li><a href="#">CONTACT</a></li>
+      <li><a href="{% url 'fundraising' %}">FUNDRAISING</a></li>
+      <li><a href="{% url 'contact' %}">CONTACT</a></li>
       {% if request.user.is_authenticated %}
         <li><a href="{% url 'dashboard' %}">MY ACCOUNT</a></li>
         <li><a href="{% url 'logout' %}">LOGOUT</a></li>
@@ -109,10 +109,5 @@
     if (!e.target.closest('.nav-user-wrap')) {
       document.getElementById('userDropdown').classList.remove('open');
     }
-  });
-
-  // Hamburger
-  document.getElementById('hamburger').addEventListener('click', function() {
-    document.getElementById('mobileMenu').classList.toggle('open');
   });
 </script>

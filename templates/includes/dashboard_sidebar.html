@@ -15,5 +15,36 @@
     </div>
   </div>
 
-  
+  <div class="sidebar-nav-wrap">
+    <ul class="sidebar-nav">
+      <li>
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+           href="{% url 'dashboard' %}">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+      </li>
+      <li>
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'my_orders' %}active{% endif %}"
+           href="{% url 'my_orders' %}">
+          <i class="fas fa-receipt"></i> Orders
+        </a>
+      </li>
+      <li>
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}"
+           href="{% url 'edit_profile' %}">
+          <i class="fas fa-user-edit"></i> Edit Profile
+        </a>
+      </li>
+      <li>
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'change_password' %}active{% endif %}"
+           href="{% url 'change_password' %}">
+          <i class="fas fa-key"></i> Change Password
+        </a>
+      </li>
+    </ul>
+
+    <a class="sidebar-logout btn" href="{% url 'logout' %}">
+      <i class="fa fa-power-off"></i> Log out
+    </a>
+  </div>
 </aside>

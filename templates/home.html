@@ -35,7 +35,7 @@
          alt="Fundraising banner"
          class="fundraising-banner-img">
     <div class="banner-overlay">
-      <a href="#" class="banner-btn">PROCEED</a>
+      <a href="{% url 'fundraising' %}" class="banner-btn">PROCEED</a>
     </div>
   </div>
 </section>
@@ -44,34 +44,66 @@
 <section class="section products-section">
   <div class="section-header">
     <h2 class="section-title">POPULAR PRODUCTS</h2>
-    <a href="{#}" class="btn btn-outline">SEE ALL</a>
+    <a href="{% url 'shop' %}" class="btn btn-outline">SEE ALL</a>
   </div>
 
   <div class="products-grid">
-    {% for product in products %}
-      <div class="product-card">
-        <a href="{{ product.get_url }}" class="product-image-wrap">
-          {% if product.images %}
-            <img src="{{ product.images.url }}" alt="{{ product.product_name }}" class="product-img">
-          {% else %}
-            <div class="product-img-placeholder">
+  {% for product in products %}
+    <div class="product-card">
+
+      <!-- Image -->
+      <a href="{{ product.get_url }}" class="product-image-wrap">
+        {% if product.images %}
+          <img src="{{ product.images.url }}"
+               alt="{{ product.product_name }}"
+               class="product-img">
+        {% else %}
+          <div class="product-img-placeholder">
             <i class="fas fa-image"></i>
-            </div>
-          {% endif %}
+          </div>
+        {% endif %}
+      </a>
+
+  <br>
+
+       <div class="product-info">
+        <a href="{{ product.get_url }}" class="product-name">
+          {{ product.product_name }}
         </a>
-        <div class="product-info">
-          <a href="{{ product.get_url }}" class="product-name">{{ product.product_name }}</a>
-          <p class="product-price">₦{{ product.price|floatformat:2 }}</p>
-          <a href="{% url 'add_cart' product.id %}" class="btn btn-outline btn-sm">
-            <i class="fas fa-shopping-cart"></i> Add to Cart
-          </a>
+    
+        <div class="product-rating">
+          {% with rating=product.avgReview|default:0 %}
+            {% for i in "12345" %}
+              {% if forloop.counter <= rating %}
+                <i class="fas fa-star"></i>
+              {% elif forloop.counter == 1 and rating >= 0.5 %}
+                <i class="fas fa-star-half-alt"></i>
+              {% elif forloop.counter == 2 and rating >= 1.5 %}
+                <i class="fas fa-star-half-alt"></i>
+              {% elif forloop.counter == 3 and rating >= 2.5 %}
+                <i class="fas fa-star-half-alt"></i>
+              {% elif forloop.counter == 4 and rating >= 3.5 %}
+                <i class="fas fa-star-half-alt"></i>
+              {% elif forloop.counter == 5 and rating >= 4.5 %}
+                <i class="fas fa-star-half-alt"></i>
+              {% else %}
+                <i class="far fa-star"></i>
+              {% endif %}
+            {% endfor %}
+            <span class="review-count">({{ product.countReview }})</span>
+          {% endwith %}
         </div>
+
+        <p class="product-price">₦{{ product.price|floatformat:2 }}</p>
       </div>
-    {% empty %}
-      <p class="empty-state">No products available yet.</p>
-    {% endfor %}
-  </div>
+    </div>
+  {% empty %}
+    <p class="empty-state">No products available yet.</p>
+  {% endfor %}
+</div>
 </section>
+
+
 
 <!-- Fundraising Banner -->
 <section class="fundraising-banner" id="fundraising">

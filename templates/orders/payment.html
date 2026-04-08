@@ -107,9 +107,18 @@
             <span class="summary-total-amount">₦{{ grand_total }}</span>
           </div>
 
-          <button onclick="payWithPaystack()" class="btn btn-dark btn-full pay-btn">
+          <button onclick="payWithPaystack()"
+                  class="btn btn-dark btn-full pay-btn"
+                  {% if paystack_key_missing %}disabled style="opacity:.6;cursor:not-allowed;"{% endif %}>
             <i class="fas fa-lock"></i> PAY ₦{{ grand_total }}
           </button>
+
+          {% if paystack_key_missing %}
+            <div class="payment-error" style="display:flex;margin-top:16px;">
+              <i class="fas fa-exclamation-circle"></i>
+              Paystack public key is missing/invalid. Set `PAYSTACK_PUBLIC_KEY` in your environment, then reload.
+            </div>
+          {% endif %}
 
           <!-- Loading state -->
           <div id="payment-loading" class="payment-loading" style="display:none;">
@@ -130,7 +139,7 @@
 
           <div class="payment-back-links">
             <a href="{% url 'checkout' %}">&larr; Back to Checkout</a>
-            <a href="{% url 'store' %}">Continue Shopping</a>
+            <a href="{% url 'shop' %}">Continue Shopping</a>
           </div>
         </div>
       </div>
@@ -156,12 +165,18 @@
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script>
   function payWithPaystack() {
+    var dataEl = document.getElementById('payment-data');
+    var publicKey = dataEl ? dataEl.dataset.key : '';
+    if (!publicKey) {
+      document.getElementById('payment-error').style.display = 'block';
+      return;
+    }
     var handler = PaystackPop.setup({
-      key    : '{{ paystack_public_key }}',
-      email  : '{{ order.email }}',
-      amount : Math.round({{ grand_total }} * 100), // kobo
+      key    : publicKey,
+      email  : dataEl.dataset.email,
+      amount : Math.round(parseFloat(dataEl.dataset.total) * 100), // kobo
       currency: 'NGN',
-      ref    : '{{ order.order_number }}_' + new Date().getTime(),
+      ref    : dataEl.dataset.orderNumber + '_' + new Date().getTime(),
       callback: function(response) {
         verifyPayment(response.reference);
       },
