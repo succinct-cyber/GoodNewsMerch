@@ -1,0 +1,2 @@
+[deploy]
+startCommand = "sh -c 'python manage.py collectstatic --noinput && gunicorn goodnews_merch.wsgi --bind 0.0.0.0:${PORT:-8000} --log-file -'"
