@@ -121,7 +121,6 @@ EMAIL_USE_TLS       = True
 EMAIL_USE_SSL       = False
 EMAIL_HOST_USER     = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL  = config('EMAIL_HOST_USER')
 
 # ── Paystack ──────────────────────────────────────────────────
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
@@ -164,9 +163,15 @@ USE_TZ        = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# settings.py — add near the bottom
+import os
+PORT = os.environ.get('PORT', 8000)
+
+STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else []
 # ── Messages ──────────────────────────────────────────────────
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {messages.ERROR: 'danger'}
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
