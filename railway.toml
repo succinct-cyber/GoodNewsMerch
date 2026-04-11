@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "python manage.py migrate && gunicorn goodnews_merch.wsgi --bind 0.0.0.0:$PORT --log-file -"
+startCommand = "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn goodnews_merch.wsgi --bind 0.0.0.0:$PORT --log-file -"
