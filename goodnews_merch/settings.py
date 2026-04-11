@@ -31,9 +31,9 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER   = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS              = 'DENY'
-    SESSION_COOKIE_SECURE        = True
-    CSRF_COOKIE_SECURE           = True
-    SECURE_SSL_REDIRECT          = True
+    # SESSION_COOKIE_SECURE        = True
+    # CSRF_COOKIE_SECURE           = True
+    # SECURE_SSL_REDIRECT          = True
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
@@ -130,7 +130,8 @@ PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 STATIC_URL  = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+WHITENOISE_AUTOREFRESH = True  # Disable caching in development
 
 # ── Media Files ───────────────────────────────────────────────
 MEDIA_URL  = '/media/'
