@@ -1,2 +1,3 @@
 [deploy]
-startCommand = "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn goodnews_merch.wsgi --bind 0.0.0.0:$PORT --log-file -"
+# collectstatic runs in nixpacks build; start only migrates + serves
+startCommand = "python manage.py migrate --noinput && gunicorn goodnews_merch.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile - --error-logfile -"

@@ -1,2 +1,0 @@
-# Procfile (in project root, no extension)
-web: gunicorn goodnews_merch.wsgi --log-file -
