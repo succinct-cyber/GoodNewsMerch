@@ -1,3 +1,4 @@
 [deploy]
-# collectstatic runs in nixpacks build; start only migrates + serves
-startCommand = "python manage.py migrate --noinput && gunicorn goodnews_merch.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile - --error-logfile -"
+# Runs once per deploy before traffic switches — keeps HTTP worker startup fast (fewer 502s).
+releaseCommand = "python manage.py migrate --noinput"
+startCommand = "sh scripts/start_web.sh"
