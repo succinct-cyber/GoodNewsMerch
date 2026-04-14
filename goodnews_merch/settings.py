@@ -93,23 +93,42 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'goodnews_merch.wsgi.application'
 
-_database_url = config('DATABASE_URL', default='')
-if _database_url and '://' in _database_url and not _database_url.startswith('://'):
-    # Let DATABASE_URL query params (e.g. ?sslmode=require) control SSL; avoids duplicate ssl flags on some hosts.
-    DATABASES = {
-        'default': dj_database_url.parse(
-            _database_url,
-            conn_max_age=600,
-            ssl_require=False,
-        )
-    }
-else:
-    DATABASES = {
+_raw_database_url = config('DATABASE_URL', default='')
+# Hosting envs sometimes inject quotes/whitespace or an accidental trailing "\".
+_database_url = (
+    _raw_database_url.strip().strip('"').strip("'").rstrip('\\').strip()
+    if isinstance(_raw_database_url, str)
+    else ''
+)
+
+def _sqlite_db():
+    return {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+
+if _database_url and '://' in _database_url:
+    try:
+        DATABASES = {
+            'default': dj_database_url.parse(
+                _database_url,
+                conn_max_age=600,
+                ssl_require=not DEBUG,
+            )
+        }
+    except Exception as exc:
+        # In production we want a hard fail with a useful error message.
+        if not DEBUG:
+            raise ValueError(
+                f"Invalid DATABASE_URL value. Got: {_raw_database_url!r} (sanitized to {_database_url!r}). "
+                "Expected e.g. postgres://user:pass@host:port/dbname"
+            ) from exc
+        DATABASES = _sqlite_db()
+else:
+    DATABASES = _sqlite_db()
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
