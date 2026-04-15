@@ -109,6 +109,7 @@ def _sqlite_db():
         }
     }
 
+
 if _database_url and '://' in _database_url:
     try:
         DATABASES = {

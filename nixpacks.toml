@@ -1,4 +1,4 @@
-# Nixpacks (Railway default builder) — must bind 0.0.0.0:$PORT or the proxy cannot reach the app.
+# Nixpacks (Railway). Web process must listen on 0.0.0.0:$PORT (see scripts/start_web.sh).
 [phases.build]
 cmds = [
   "pip install -r requirements.txt",
@@ -6,4 +6,4 @@ cmds = [
 ]
 
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn goodnews_merch.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -"
+cmd = "sh scripts/start_web.sh"
