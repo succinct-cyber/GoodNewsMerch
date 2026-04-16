@@ -30,6 +30,8 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('fundraising/', views.fundraising, name='fundraising'),
     path('contact/', views.contact, name='contact'),
+    path('terms/',   views.terms,   name='terms'),
+    path('privacy/', views.privacy, name='privacy'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

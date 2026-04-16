@@ -36,7 +36,7 @@
     <!-- Results header -->
     <div class="store-header">
       {% if keyword %}
-        <p class="store-results">Showing results for "<strong>{{ keyword }}</strong>"</p> {{products_count}} result{{ products_count|pluralize }} found.
+        <p class="store-results">Showing results for "<strong>{{ keyword }}</strong>" - {{ products_count }} result{{ products_count|pluralize }} found.</p>
       {% elif current_category %}
         <p class="store-results">{{ current_category_name }}</p>
       {% else %}

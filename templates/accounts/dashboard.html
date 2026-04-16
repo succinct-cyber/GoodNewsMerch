@@ -68,15 +68,15 @@
               <tbody>
                 {% for order in recent_orders|slice:":5" %}
                   <tr>
-                    <td class="order-num">{{ order.order_number }}</td>
-                    <td>{{ order.created_at|date:"M d, Y" }}</td>
-                    <td>₦{{ order.order_total|floatformat:2 }}</td>
-                    <td>
+                    <td class="order-num" data-label="Order #">{{ order.order_number }}</td>
+                    <td data-label="Date">{{ order.created_at|date:"M d, Y" }}</td>
+                    <td data-label="Total">₦{{ order.order_total|floatformat:2 }}</td>
+                    <td data-label="Status">
                       <span class="order-status status-{{ order.status|lower }}">
                         {{ order.status }}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Action">
                       <a href="{% url 'order_details' order.order_number %}" class="table-link">
                         Details &rarr;
                       </a>

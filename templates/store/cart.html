@@ -31,7 +31,7 @@
               {% for cart_item in cart_items %}
                 <tr class="cart-row">
                   <!-- Product Info -->
-                  <td class="cart-product">
+                  <td class="cart-product" data-label="Product">
                     <div class="cart-product-inner">
                       <div class="cart-product-img-wrap">
                         <img src="{{ cart_item.product.images.url }}" alt="{{ cart_item.product.product_name }}" class="cart-product-img">
@@ -54,7 +54,7 @@
                   </td>
 
                   <!-- Quantity Stepper -->
-                  <td class="cart-quantity">
+                  <td class="cart-quantity" data-label="Quantity">
                     <div class="qty-stepper">
                       <a href="{% url 'remove_cart' cart_item.product.id cart_item.id %}" class="qty-btn qty-minus">
                         &minus;
@@ -67,7 +67,7 @@
                   </td>
 
                   <!-- Item Total -->
-                  <td class="cart-item-total">
+                  <td class="cart-item-total" data-label="Total">
                     ₦{{ cart_item.sub_total|floatformat:2 }}
                   </td>
                 </tr>

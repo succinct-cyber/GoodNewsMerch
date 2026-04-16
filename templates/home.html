@@ -15,9 +15,11 @@
       <h2 class="hero-share"> SHARE THE NEWS.</h2>
 
       <p class="hero-sub"> Wear your faith comfortably and in style.</p>
-      
-      <a href="#" class="btn btn-dark">SHOP THE DROP</a>
-      <a href="#" class="btn btn-outline">VIEW LOOKBOOK</a>
+
+      <div class="hero-actions">
+        <a href="{% url 'shop' %}" class="btn btn-dark">SHOP THE DROP</a>
+        <a href="#" class="btn btn-outline">VIEW LOOKBOOK</a>
+      </div>
     </div>
     <div class="hero-image">
       <img src="{% static 'images/items/Recreate_the_exact_202603201111 (1) 2.png' %}" alt="GoodNews Merch Hero" class="hero-img">
@@ -110,7 +112,7 @@
   <div class="fundraising-inner">
     <h2>EVERY PURCHASE SUPPORTS A CAUSE.</h2>
     <p>A portion of every sale goes toward outreach programs and community development.</p>
-    <a href="{#}" class="btn btn-light">SHOP & GIVE BACK</a>
+    <a href="{% url 'fundraising' %}" class="btn btn-light">LEARN MORE</a>
   </div>
 </section>
 

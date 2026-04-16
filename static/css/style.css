@@ -50,6 +50,7 @@ body {
     font-size: 15px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
 img {
@@ -705,6 +706,7 @@ select {
     font-size: 13px;
     color: var(--color-text-muted);
     letter-spacing: 0.5px;
+    overflow-wrap: anywhere;
 }
 
 /* Pagination */
@@ -1576,6 +1578,7 @@ select {
     font-size: 13px;
     color: var(--color-text-body);
     border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
 }
 
 .order-num {
@@ -2210,6 +2213,13 @@ select {
     max-width: 500px;
 }
 
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
 img {
     cursor: pointer;
 }
@@ -2642,6 +2652,11 @@ img {
 .payment-back-links a:hover {
     color: var(--color-text);
     opacity: 1;
+}
+
+.orders-wrap,
+.cart-items-wrap {
+    min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -3242,4 +3257,402 @@ label:hover~input:checked~label {
 .rating label.half:hover {
     color: #FF8800;
     opacity: 1;
+}
+
+/* ── Static Pages (Contact, Terms, Privacy) ── */
+.static-page {
+    padding: 60px 0 80px;
+}
+
+.static-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--color-black);
+}
+
+.static-page-body {
+    max-width: 760px;
+}
+
+.static-page-body h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 32px 0 10px;
+}
+
+.static-page-body p {
+    font-size: 15px;
+    color: var(--color-text-body);
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+.static-page-body a {
+    color: var(--color-text);
+    text-decoration: underline;
+}
+
+.contact-info {
+    background: var(--color-section-bg);
+    padding: 24px;
+    margin: 24px 0;
+}
+
+.contact-info p {
+    margin-bottom: 8px;
+}
+
+.contact-note {
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* ── Static Pages (Contact, Terms, Privacy) ── */
+.static-page { padding: 60px 0 80px; }
+.static-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  margin-bottom: 40px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-black);
+}
+.static-page-body { max-width: 760px; }
+.static-page-body h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 32px 0 10px;
+}
+.static-page-body p {
+  font-size: 15px;
+  color: var(--color-text-body);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.static-page-body a { color: var(--color-text); text-decoration: underline; }
+.contact-info {
+  background: var(--color-section-bg);
+  padding: 24px;
+  margin: 24px 0;
+}
+.contact-info p { margin-bottom: 8px; }
+.contact-note { color: var(--color-text-muted); font-size: 13px; }
+
+/* ── Mobile: hide logo text, keep only mark ── */
+@media (max-width: 768px) {
+    .logo-text {
+        display: none;
+    }
+
+    .logo-img {
+        height: 28px;
+    }
+
+    /* Tighten navbar icons gap */
+    .navbar-icons {
+        gap: 14px;
+    }
+
+    .navbar-inner {
+        padding: 0 16px;
+    }
+
+    .hero {
+        min-height: auto;
+    }
+
+    .hero-inner {
+        padding: 32px 16px 40px;
+        gap: 24px;
+    }
+
+    .hero-text {
+        max-width: 100%;
+    }
+
+    .hero-title {
+        font-size: 24px;
+    }
+
+    .hero-message {
+        font-size: 42px;
+        line-height: 1;
+    }
+
+    .hero-share {
+        font-size: 24px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .breadcrumb-wrap .container {
+        flex-wrap: wrap;
+        row-gap: 4px;
+    }
+
+    .store-layout,
+    .product-detail-inner,
+    .cart-layout,
+    .payment-layout {
+        gap: 24px;
+    }
+
+    .store-layout,
+    .product-detail-inner,
+    .cart-layout,
+    .checkout-layout,
+    .payment-layout,
+    .order-detail-layout {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .checkout-section,
+    .payment-section,
+    .order-complete-section,
+    .dashboard-section,
+    .product-detail {
+        padding-top: 32px;
+    }
+
+    .product-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .product-thumbnails {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+    }
+
+    .product-thumb {
+        width: 64px;
+        height: 64px;
+    }
+
+    .fundraising-banner-wrap {
+        aspect-ratio: auto;
+    }
+
+    .fundraising-banner-img {
+        position: static;
+        height: auto;
+    }
+
+    .banner-overlay {
+        inset: auto 16px 16px 16px;
+        display: block;
+        padding: 0;
+    }
+
+    .banner-btn {
+        display: inline-flex;
+        max-width: 100%;
+        justify-content: center;
+    }
+
+    .payment-inner {
+        padding: 0 16px;
+    }
+
+    .payment-card,
+    .payment-summary-card,
+    .order-complete-card,
+    .write-review-wrap,
+    .dashboard-sidebar {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .payment-items-table,
+    .orders-table,
+    .cart-table {
+        width: 100%;
+    }
+
+    .payment-items-table thead,
+    .orders-table thead,
+    .cart-table thead {
+        display: none;
+    }
+
+    .payment-items-table tbody,
+    .payment-items-table tr,
+    .payment-items-table td,
+    .orders-table tbody,
+    .orders-table tr,
+    .orders-table td,
+    .cart-table tbody,
+    .cart-table tr,
+    .cart-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .payment-items-table tr,
+    .orders-table tr,
+    .cart-row {
+        background: var(--color-white);
+        border: 1px solid var(--color-border);
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .payment-items-table td,
+    .orders-table td,
+    .cart-table td {
+        border-bottom: none;
+        padding: 0;
+    }
+
+    .payment-items-table td + td,
+    .orders-table td + td,
+    .cart-table td + td {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .payment-items-table td[data-label]::before,
+    .orders-table td[data-label]::before,
+    .cart-table td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    .cart-product-inner,
+    .payment-item {
+        align-items: center;
+    }
+
+    .cart-item-total,
+    .payment-items-table td:last-child {
+        text-align: left;
+    }
+
+    .qty-stepper {
+        width: fit-content;
+    }
+
+    .orders-table tr td:last-child {
+        padding-top: 10px;
+    }
+
+    .payment-back-links,
+    .order-item-row,
+    .order-complete-actions,
+    .review-card-header,
+    .order-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .payment-back-links,
+    .order-complete-actions {
+        gap: 12px;
+    }
+
+    .order-complete-actions .btn,
+    .payment-back-links a {
+        width: 100%;
+    }
+
+    .reviews-inner {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-img {
+        height: 24px;
+    }
+
+    .navbar-icons {
+        gap: 10px;
+    }
+
+    .hero-title {
+        font-size: 20px;
+    }
+
+    .hero-message {
+        font-size: 34px;
+    }
+
+    .hero-share {
+        font-size: 20px;
+    }
+
+    .hero-sub {
+        font-size: 13px;
+    }
+
+    .cart-product-inner,
+    .payment-item,
+    .reviewer-info,
+    .sidebar-user,
+    .stat-card {
+        align-items: flex-start;
+    }
+
+    .cart-product-inner,
+    .payment-item,
+    .stat-card {
+        flex-direction: column;
+    }
+
+    .cart-product-img-wrap,
+    .payment-item-img {
+        width: 100%;
+        max-width: 96px;
+        height: 96px;
+    }
+
+    .payment-page-title h1,
+    .page-title,
+    .static-page-title {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+
+    .fundraising-heading,
+    .cart-title,
+    .auth-big-title {
+        letter-spacing: 2px;
+    }
+
+    .fundraising-heading {
+        font-size: 32px;
+    }
+
+    .order-ref,
+    .payment-summary-card,
+    .order-complete-card {
+        min-width: 0;
+    }
+
+    .summary-total-amount {
+        font-size: 18px;
+    }
 }

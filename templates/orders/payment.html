@@ -61,7 +61,7 @@
               <tbody>
                 {% for cart_item in cart_items %}
                   <tr>
-                    <td>
+                    <td data-label="Product">
                       <div class="payment-item">
                         {% if cart_item.product.images %}
                           <img src="{{ cart_item.product.images.url }}"
@@ -78,8 +78,8 @@
                         </div>
                       </div>
                     </td>
-                    <td>{{ cart_item.quantity }}</td>
-                    <td>₦{{ cart_item.sub_total }}</td>
+                    <td data-label="Qty">{{ cart_item.quantity }}</td>
+                    <td data-label="Total">₦{{ cart_item.sub_total }}</td>
                   </tr>
                 {% endfor %}
               </tbody>

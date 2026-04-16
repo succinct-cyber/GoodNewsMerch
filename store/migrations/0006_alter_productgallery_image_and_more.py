@@ -4,6 +4,36 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def delete_orphaned_admin_logs(apps, schema_editor):
+    """Remove admin log rows pointing to deleted users before SQLite FK checks."""
+    connection = schema_editor.connection
+    vendor = connection.vendor
+
+    user_table = 'accounts_account'
+    if vendor == 'postgresql':
+        sql = f'''
+            DELETE FROM django_admin_log
+            WHERE user_id IN (
+                SELECT l.user_id
+                FROM django_admin_log l
+                LEFT JOIN {user_table} u ON l.user_id = u.id
+                WHERE u.id IS NULL
+            )
+        '''
+    else:
+        sql = f'''
+            DELETE FROM django_admin_log
+            WHERE user_id IN (
+                SELECT user_id
+                FROM django_admin_log
+                WHERE user_id NOT IN (SELECT id FROM {user_table})
+            )
+        '''
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -11,6 +41,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(delete_orphaned_admin_logs, migrations.RunPython.noop),
         migrations.AlterField(
             model_name='productgallery',
             name='image',
