@@ -20,7 +20,7 @@ ALLOWED_HOSTS = [
 
 # Django does not accept wildcards like https://*.railway.app — merge env + auto https origins for concrete hosts
 _csrf_from_env = config('CSRF_TRUSTED_ORIGINS', default='')
-CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_from_env.split(',') if o.strip()]
+CSRF_TRUSTED_ORIGINS = ['https://goodnewsmerch.store', 'https://www.goodnewsmerch.store', o.strip() for o in _csrf_from_env.split(',') if o.strip()]
 for _host in ALLOWED_HOSTS:
     if _host.startswith('.'):
         continue
