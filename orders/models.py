@@ -44,7 +44,7 @@ class Order(models.Model):
     city = models.CharField(max_length=50)
     order_note = models.TextField(blank=True)
     order_total = models.FloatField()
-    tax = models.FloatField()
+    tax = models.FloatField(default=0.00)
     status = models.CharField(max_length=10, choices=STATUS, default='New')
     ip = models.CharField(blank=True, max_length=20)
     is_ordered = models.BooleanField(default=False)

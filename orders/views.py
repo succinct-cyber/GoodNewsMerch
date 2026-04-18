@@ -42,7 +42,7 @@ def place_order(request, total=0, quantity=0):
         total    += cart_item.sub_total()
         quantity += cart_item.quantity
 
-    tax         = round((2 * total) / 100, 2)
+    tax         = 0
     grand_total = total + tax
 
     form = OrderForm(request.POST)
@@ -210,7 +210,7 @@ def payment(request, order_number):
                 item_price += v.price_modifier
         total += item_price * item.quantity
 
-    tax        = round((2 * total) / 100, 2)
+    tax        = 0
     grand_total = total + tax
 
     context = {
@@ -266,17 +266,13 @@ def guest_checkout(request):
     if not cart_items.exists():
         return redirect('store')
 
-    total    = 0
+    total = 0
     quantity = 0
     for item in cart_items:
-        item_price = item.product.price
-        for v in item.variations.all():
-            if v.variation_category == 'quality':
-                item_price += v.price_modifier
-        total    += item_price * item.quantity
+        total += item.sub_total()
         quantity += item.quantity
 
-    tax         = round((2 * total) / 100, 2)
+    tax         = 0
     grand_total = total + tax
 
     context = {
@@ -305,17 +301,13 @@ def guest_place_order(request):
     if not cart_items.exists():
         return redirect('shop')
 
-    total    = 0
+    total = 0
     quantity = 0
     for item in cart_items:
-        item_price = item.product.price
-        for v in item.variations.all():
-            if v.variation_category == 'quality':
-                item_price += v.price_modifier
-        total    += item_price * item.quantity
+        total += item.sub_total()
         quantity += item.quantity
 
-    tax         = round((2 * total) / 100, 2)
+    tax         = 0
     grand_total = total + tax
 
     # Build order — no user FK required (guest)

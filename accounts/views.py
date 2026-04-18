@@ -48,28 +48,35 @@ def register(request):
             user.save()
 
             # Create user profile
-            UserProfile.objects.create(user=user)
+            UserProfile.objects.get_or_create(user=user)
 
             # Send verification email
-            current_site = get_current_site(request)
-            mail_subject = 'Please activate your account'
-            message = render_to_string(
-                'accounts/account_verification_email.html',
-                {
-                    'user':   user,
-                    'domain': current_site.domain,
-                    'uid':    urlsafe_base64_encode(force_bytes(user.pk)),
-                    'token':  default_token_generator.make_token(user),
-                }
-            )
-        
-            send_email = EmailMessage(mail_subject, message, to=[email])
-            send_email.content_subtype = 'html'
-            send_email.send()
+            try:
+                current_site = get_current_site(request)
+                mail_subject = 'Please activate your account'
+                message = render_to_string(
+                    'accounts/account_verification_email.html',
+                    {
+                        'user':   user,
+                        'domain': current_site.domain,
+                        'uid':    urlsafe_base64_encode(force_bytes(user.pk)),
+                        'token':  default_token_generator.make_token(user),
+                    }
+                )
+            
+                send_email = EmailMessage(mail_subject, message, to=[email])
+                send_email.content_subtype = 'html'
+                send_email.send()
 
-            messages.success(request,
-                f'We sent a verification email to {email}. Please verify it.'
-            )
+                messages.success(request,
+                    f'We sent a verification email to {email}. Please verify it.'
+                )
+            except Exception as e:
+                logger.warning('Verification email failed: %s', e, exc_info=True)
+                messages.error(
+                    request,
+                    'We could not send the verification email. Check your internet connection, firewall, and EMAIL_* settings, then try again.',
+                )
             return redirect(f'/accounts/login/?command=verification&email={email}')
         else:
             print(form.errors)

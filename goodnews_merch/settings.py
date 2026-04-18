@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'accounts',
+    'anymail',
 ]
 
 # Cloudinary only when all credentials are set (avoids boot/collectstatic crash in prod without keys)
@@ -137,14 +138,11 @@ if _database_url and '://' in _database_url:
 else:
     DATABASES = _sqlite_db()
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER or 'noreply@localhost')
+EMAIL_BACKEND = 'anymail.backends.brevo.EmailBackend'
+ANYMAIL = {
+    'BREVO_API_KEY': config('BREVO_API_KEY', default=''),
+}
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@goodnewsmerch.store')
 
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY', default='')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY', default='')
