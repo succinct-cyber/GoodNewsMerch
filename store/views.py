@@ -47,7 +47,6 @@ def store(request, category_slug=None):
     return render(request, 'store/store.html', context)
 
 def _dedupe_by_value(variation_qs):
-    """Keep one active variation per display value (case-insensitive)."""
     seen = set()
     out = []
     for v in variation_qs.order_by('id'):

@@ -3656,3 +3656,38 @@ label:hover~input:checked~label {
         font-size: 18px;
     }
 }
+
+/* ── Payment Method Selector ── */
+.payment-method-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.payment-method-chip input[type="radio"] {
+    display: none;
+}
+
+.payment-method-chip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 2px solid var(--color-border);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.payment-method-chip input:checked+span {
+    border-color: var(--color-black);
+    background: var(--color-black);
+    color: var(--color-white);
+}
+
+.payment-method-chip span:hover {
+    border-color: var(--color-black);
+}

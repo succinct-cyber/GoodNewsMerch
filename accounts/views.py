@@ -178,9 +178,6 @@ def dashboard(request):
         is_ordered=True,
     ).order_by('-created_at')
 
-    # Completed is determined by successful payment verification.
-    # (Paid orders were previously showing up as pending because order.status
-    # wasn't being set in the payment-success flow.)
     completed_orders = base_orders.filter(payment__status='success').order_by('-created_at')
     pending_orders = base_orders.exclude(payment__status='success').order_by('-created_at')
     recent_orders = list(completed_orders) + list(pending_orders)

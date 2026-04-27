@@ -1,6 +1,7 @@
 # orders/views.py\
 import json
 import datetime
+from unittest import result
 import requests
 
 from django.http import JsonResponse
@@ -74,19 +75,23 @@ def place_order(request, total=0, quantity=0):
             is_ordered=False,
             order_number=data.order_number
         )
+        payment_method = request.POST.get('payment_method', 'paystack')
 
         context = {
-            'order'              : order,
-            'cart_items'         : cart_items,
-            'total'              : total,
-            'tax'                : tax,
-            'grand_total'        : grand_total,
-            'paystack_public_key': getattr(settings, 'PAYSTACK_PUBLIC_KEY', '') or '',
-            'paystack_key_missing': not bool(getattr(settings, 'PAYSTACK_PUBLIC_KEY', '') or ''),
+            'order'                 : order,
+            'cart_items'            : cart_items,
+            'total'                 : total,
+            'tax'                   : tax,
+            'grand_total'           : grand_total,
+            'paystack_public_key'   : settings.PAYSTACK_PUBLIC_KEY,
+            'flutterwave_public_key': settings.FLUTTERWAVE_PUBLIC_KEY,
+            'payment_method'        : payment_method,
         }
+
+        if payment_method == 'flutterwave':
+            return render(request, 'orders/flutterwave_payment.html', context)
         return render(request, 'orders/payment.html', context)
 
-    # Form invalid — go back to checkout
     return redirect('checkout')
 
 
@@ -250,10 +255,6 @@ def order_complete(request):
     
 
 def guest_checkout(request):
-    """
-    Checkout for both guests and logged-in users.
-    Guests provide email — order is tied to email, not account.
-    """
     if request.user.is_authenticated:
         cart_items = CartItem.objects.filter(user=request.user)
     else:
@@ -332,14 +333,158 @@ def guest_place_order(request):
     data.order_number = current_date + str(data.id)
     data.save()
 
-    pk = getattr(settings, 'PAYSTACK_PUBLIC_KEY', '') or ''
+    pk    = getattr(settings, 'PAYSTACK_PUBLIC_KEY',     '') or ''
+    fw_pk = getattr(settings, 'FLUTTERWAVE_PUBLIC_KEY',  '') or ''
+
+    payment_method = request.POST.get('payment_method', 'paystack')
+
     context = {
-        'order': data,
-        'cart_items': cart_items,
-        'total': total,
-        'tax': tax,
-        'grand_total': grand_total,
-        'paystack_public_key': pk,
-        'paystack_key_missing': not bool(pk),
+        'order'                 : data,
+        'cart_items'            : cart_items,
+        'total'                 : total,
+        'tax'                   : tax,
+        'grand_total'           : grand_total,
+        'paystack_public_key'   : pk,
+        'paystack_key_missing'  : not bool(pk),
+        'flutterwave_public_key': fw_pk,
+        'payment_method'        : payment_method,
     }
+
+    if payment_method == 'flutterwave':
+        return render(request, 'orders/flutterwave_payment.html', context)
     return render(request, 'orders/payment.html', context)
+
+
+@login_required(login_url='login')
+def flutterwave_payment(request, order_number):
+    order      = Order.objects.get(order_number=order_number, user=request.user)
+    cart_items = CartItem.objects.filter(user=request.user)
+
+    total    = 0
+    for item in cart_items:
+        item_price = item.product.price
+        for v in item.variations.all():
+            if v.variation_category == 'quality':
+                item_price += v.price_modifier
+        total += item_price * item.quantity
+
+    tax         = round((2 * total) / 100, 2)
+    grand_total = total + tax
+
+    context = {
+        'order'                 : order,
+        'cart_items'            : cart_items,
+        'total'                 : total,
+        'tax'                   : tax,
+        'grand_total'           : grand_total,
+        'flutterwave_public_key': settings.FLUTTERWAVE_PUBLIC_KEY,
+    }
+    return render(request, 'orders/flutterwave_payment.html', context)
+
+
+def flutterwave_verify(request):
+    if request.method != 'POST':
+        return redirect('home')
+
+    try:
+        body           = json.loads(request.body)
+        order_number   = body['orderID']
+        transaction_id = body['transID']
+    except (json.JSONDecodeError, KeyError):
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+    if request.user.is_authenticated:
+        try:
+            order = Order.objects.get(
+                user=request.user,
+                is_ordered=False,
+                order_number=order_number,
+            )
+        except Order.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Order not found'}, status=404)
+    else:
+        try:
+            order = Order.objects.get(
+                user__isnull=True,
+                is_ordered=False,
+                order_number=order_number,
+            )
+        except Order.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Order not found'}, status=404)
+
+    try:
+        headers  = {'Authorization': f'Bearer {settings.FLUTTERWAVE_SECRET_KEY}'}
+        url      = f'https://api.flutterwave.com/v3/transactions/{transaction_id}/verify'
+        response = requests.get(url, headers=headers, timeout=15)
+        result   = response.json()
+    except Exception as e:
+        # network failure, bad JSON from Flutterwave, etc.
+        print('Flutterwave API error:', e)
+        return JsonResponse({'status': 'error', 'message': 'Payment gateway error'}, status=502)
+
+    # ✅ .get() everywhere — no KeyError possible
+    if result.get('status') == 'success' and result.get('data', {}).get('status') == 'successful':
+        data        = result['data']
+        amount_paid = data.get('amount', 0)
+
+        payment                = Payment()
+        payment.user           = request.user if request.user.is_authenticated else None
+        payment.payment_id     = str(transaction_id)
+        payment.payment_method = 'Flutterwave'
+        payment.amount_paid    = amount_paid
+        payment.status         = 'successful'
+        payment.save()
+
+        order.payment    = payment
+        order.is_ordered = True
+        order.status     = 'Completed'
+        order.save()
+
+        if request.user.is_authenticated:
+            cart_items = CartItem.objects.filter(user=request.user, active=True)
+        else:
+            try:
+                cart       = Cart.objects.get(cart_id=_cart_id(request))
+                cart_items = CartItem.objects.filter(cart=cart, active=True)
+            except Cart.DoesNotExist:
+                cart_items = CartItem.objects.none()
+
+        account_user = request.user if request.user.is_authenticated else None
+        for item in cart_items:
+            order_product               = OrderProduct()
+            order_product.order         = order
+            order_product.payment       = payment
+            order_product.user          = account_user
+            order_product.product       = item.product
+            order_product.quantity      = item.quantity
+            order_product.product_price = _cart_item_unit_price(item)
+            order_product.ordered       = True
+            order_product.save()
+            order_product.variations.set(item.variations.all())
+
+            item.product.stock -= item.quantity
+            item.product.save()
+
+        cart_items.delete()
+
+        try:
+            mail_subject = 'Thank you for your order!'
+            message      = render_to_string('orders/order_confirmation_email.html', {
+                'user' : account_user,
+                'order': order,
+            })
+            to_email   = account_user.email if account_user else order.email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.content_subtype = 'html'
+            send_email.send()
+        except Exception as e:
+            print('Order email failed:', e)
+
+        return JsonResponse({
+            'status'      : 'success',
+            'order_number': order.order_number,
+            'payment_id'  : payment.payment_id,
+        })
+
+    print('Flutterwave verification failed. Response:', result)
+    return JsonResponse({'status': 'failed'}, status=400)

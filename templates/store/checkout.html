@@ -75,6 +75,24 @@
                       placeholder="Any special instructions for your order..."></textarea>
           </div>
 
+          <div class="form-group">
+            <label class="form-label">PAYMENT METHOD</label>
+            <div class="payment-method-options">
+              <label class="payment-method-chip">
+                <input type="radio" name="payment_method" value="paystack" checked required>
+                <span>
+                  <i class="fas fa-lock"></i> Paystack
+                </span>
+              </label>
+              <label class="payment-method-chip">
+                <input type="radio" name="payment_method" value="flutterwave" required>
+                <span>
+                  <i class="fas fa-bolt"></i> Flutterwave
+                </span>
+              </label>
+            </div>
+          </div>
+
           <button type="submit" class="btn btn-dark btn-full summary-checkout">
             PROCEED TO PAYMENT &rarr;
           </button>

@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment | GoodNews Merch{% endblock %}
+
+{% block content %}
+
+<section class="payment-section">
+  <div class="payment-inner">
+
+    <div class="payment-page-title">
+      <h1>REVIEW & PAY</h1>
+      <div class="title-underline"></div>
+    </div>
+
+    <div class="payment-layout">
+
+      <!-- LEFT: Order Review -->
+      <div class="payment-left">
+
+        <div class="payment-card">
+          <h2 class="payment-card-title">DELIVERY ADDRESS</h2>
+          <div class="payment-card-body">
+            <p>{{ order.full_name }}</p>
+            <p>{{ order.full_address }}</p>
+            <p>{{ order.city }}, {{ order.state }}</p>
+            <p>{{ order.country }}</p>
+            <p>{{ order.phone }}</p>
+            <p>{{ order.email }}</p>
+          </div>
+        </div>
+
+        <div class="payment-card">
+          <h2 class="payment-card-title">PAYMENT METHOD</h2>
+          <div class="payment-card-body">
+            <div class="paystack-badge">
+              <i class="fas fa-bolt"></i>
+              <span>Secured by Flutterwave — Cards, Bank Transfer, USSD, Mobile Money</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-card">
+          <h2 class="payment-card-title">ORDER ITEMS</h2>
+          <div class="payment-card-body">
+            <table class="payment-items-table">
+              <thead>
+                <tr>
+                  <th>PRODUCT</th>
+                  <th>QTY</th>
+                  <th>TOTAL</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for cart_item in cart_items %}
+                  <tr>
+                    <td>
+                      <div class="payment-item">
+                        {% if cart_item.product.images %}
+                          <img src="{{ cart_item.product.images.url }}"
+                               alt="{{ cart_item.product.product_name }}"
+                               class="payment-item-img">
+                        {% endif %}
+                        <div class="payment-item-info">
+                          <p class="payment-item-name">{{ cart_item.product.product_name }}</p>
+                          {% for v in cart_item.variations.all %}
+                            <p class="payment-item-var">
+                              {{ v.variation_category|capfirst }}: {{ v.variation_value|capfirst }}
+                            </p>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ cart_item.quantity }}</td>
+                    <td>₦{{ cart_item.sub_total }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Summary + Pay -->
+      <div class="payment-right">
+        <div class="payment-summary-card">
+          <h2 class="payment-card-title">ORDER SUMMARY</h2>
+
+          <div class="summary-row">
+            <span>SUBTOTAL</span>
+            <span>₦{{ total }}</span>
+          </div>
+          <div class="summary-row">
+            <span>TAX</span>
+            <span>₦{{ tax }}</span>
+          </div>
+          <div class="summary-total">
+            <span>GRAND TOTAL</span>
+            <span class="summary-total-amount">₦{{ grand_total }}</span>
+          </div>
+
+          <button onclick="payWithFlutterwave()" class="btn btn-dark btn-full pay-btn">
+            <i class="fas fa-bolt"></i> PAY ₦{{ grand_total }}
+          </button>
+
+          <div id="payment-loading" class="payment-loading" style="display:none;">
+            <div class="loading-spinner"></div>
+            <p>Verifying your payment...</p>
+          </div>
+
+          <div id="payment-error" class="payment-error" style="display:none;">
+            <i class="fas fa-exclamation-circle"></i>
+            Payment verification failed. Please contact support.
+          </div>
+
+          <div class="payment-secure-note">
+            <i class="fas fa-shield-alt"></i>
+            Secured by Flutterwave
+          </div>
+
+          <div class="payment-back-links">
+            <a href="{% url 'checkout' %}">&larr; Back to Checkout</a>
+            <a href="{% url 'shop' %}">Continue Shopping</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script>
+  function payWithFlutterwave() {
+    FlutterwaveCheckout({
+      public_key: '{{ flutterwave_public_key }}',
+      tx_ref:     '{{ order.order_number }}_' + Date.now(),
+      amount:     {{ grand_total }},
+      currency:   'NGN',
+      payment_options: 'card, banktransfer, ussd',
+      customer: {
+        email:       '{{ order.email }}',
+        phone_number:'{{ order.phone }}',
+        name:        '{{ order.full_name }}',
+      },
+      customizations: {
+        title:       'GoodNews Merch',
+        description: 'Order #{{ order.order_number }}',
+        logo:        'https://goodnewsmerch.store/static/images/logos/goodnews merch logo.svg',
+      },
+      callback: function(data) {
+        console.log('Flutterwave callback data:', JSON.stringify(data));
+        if (data.status === 'successful' || data.status === 'completed') {
+          verifyPayment(data.transaction_id);
+        } else {
+          document.getElementById('payment-error').style.display = 'block';
+        }
+      },
+      onclose: function() {
+        console.log('Payment modal closed.');
+      },
+    });
+  }
+
+  function verifyPayment(transactionId) {
+    document.getElementById('payment-loading').style.display = 'block';
+    document.getElementById('payment-error').style.display   = 'none';
+
+    $.ajax({
+      type   : 'POST',
+      url    : '{% url "flutterwave_verify" %}',
+      data   : JSON.stringify({
+        orderID: '{{ order.order_number }}',
+        transID: transactionId,
+      }),
+      headers: {
+        'X-CSRFToken' : '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+      success: function(response) {
+        document.getElementById('payment-loading').style.display = 'none';
+        if (response.status === 'success') {
+          window.location.href = '/orders/order_complete/?order_number='
+            + response.order_number + '&payment_id=' + response.payment_id;
+        }
+      },
+      error: function(xhr) {
+        document.getElementById('payment-loading').style.display = 'none';
+        document.getElementById('payment-error').style.display   = 'block';
+        console.error('Verification error:', xhr.responseText);
+      }
+
+      
+    });
+  }
+</script>
+{% endblock %}

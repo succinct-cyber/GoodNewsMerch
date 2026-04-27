@@ -178,10 +178,6 @@ def checkout(request, total=0, quantity=0, cart_items=None):
 
 
 def buy_now(request, product_id):
-    """
-    Adds item to cart (same logic as add_cart) then
-    redirects straight to checkout — no login required.
-    """
     if request.method != 'POST':
         return redirect('shop')
 
