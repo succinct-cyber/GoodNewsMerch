@@ -85,7 +85,7 @@ SIMPLE_JWT = {
 _CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
 _CLOUD_KEY = config('CLOUDINARY_API_KEY', default='')
 _CLOUD_SECRET = config('CLOUDINARY_API_SECRET', default='')
-USE_CLOUDINARY = (not DEBUG) and bool(_CLOUD_NAME and _CLOUD_KEY and _CLOUD_SECRET)
+USE_CLOUDINARY = bool(_CLOUD_NAME and _CLOUD_KEY and _CLOUD_SECRET)
 
 if USE_CLOUDINARY:
     INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
