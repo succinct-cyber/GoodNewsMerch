@@ -3686,3 +3686,7 @@ label:hover~input:checked~label {
     color: var(--color-white) !important;
     border-color: var(--color-text);
 }
+
+.payment-method-chip input[type="radio"] {
+    display: none !important;
+}
