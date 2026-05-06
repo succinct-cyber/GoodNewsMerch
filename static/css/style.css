@@ -3024,11 +3024,16 @@ ul.thumb li img {
 }
 
 
-
-/* Click and hover */
-input:checked~label,
-label:hover~label {
+.rating input:checked~label,
+.rating label:hover~label {
     color: #ffb503;
+}
+
+.rating input:checked+label:hover,
+.rating input:checked~label:hover,
+.rating input:checked~label:hover~label,
+.rating label:hover~input:checked~label {
+    color: #cc9000;
 }
 
 /* hover hightlight */
@@ -3657,37 +3662,27 @@ label:hover~input:checked~label {
     }
 }
 
-/* ── Payment Method Selector ── */
-.payment-method-options {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-
-.payment-method-chip input[type="radio"] {
-    display: none;
-}
-
-.payment-method-chip span {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    border: 2px solid var(--color-border);
-    font-size: 13px;
+/* Delivery option radio labels only — not payment chips */
+.checkout-form-wrap .delivery-radio input[type="radio"]:checked~span {
+    color: inherit;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all var(--transition);
 }
 
+/* Payment chips: selected = black bg + white text. Don't touch color here */
 .payment-method-chip input:checked+span {
     border-color: var(--color-black);
     background: var(--color-black);
-    color: var(--color-white);
+    color: var(--color-white) !important;
+    /* ← force white, defeats inherit */
 }
 
 .payment-method-chip span:hover {
     border-color: var(--color-black);
+}
+
+/* Variation chips */
+.variation-chip input:checked+span {
+    background: var(--color-text);
+    color: var(--color-white) !important;
+    border-color: var(--color-text);
 }

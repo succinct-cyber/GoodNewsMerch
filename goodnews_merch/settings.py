@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+
 # Railway: include subdomain wildcards via leading dot. Add your custom domain explicitly in env.
 ALLOWED_HOSTS = [
     h.strip()
@@ -166,6 +167,7 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@goodnewsmerch.st
 
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY', default='')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY', default='')
+PAYSTACK_LIVE = config('PAYSTACK_LIVE', default=False, cast=bool)
 
 FLUTTERWAVE_PUBLIC_KEY = config('FLUTTERWAVE_PUBLIC_KEY', default='')
 FLUTTERWAVE_SECRET_KEY = config('FLUTTERWAVE_SECRET_KEY', default='')

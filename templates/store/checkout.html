@@ -12,7 +12,6 @@
 
     <div class="checkout-layout">
 
-      <!-- Billing Form -->
       <div class="checkout-form-wrap">
         <h2 class="checkout-section-title">DELIVERY INFORMATION</h2>
 
@@ -75,20 +74,63 @@
                       placeholder="Any special instructions for your order..."></textarea>
           </div>
 
-          <div class="form-group">
+          <!-- Delivery Option -->
+          <div class="form-group" style="margin-top:20px;">
+            <label>Delivery Option</label>
+
+            <label class="delivery-radio" style="display:flex;align-items:flex-start;gap:10px;margin-top:12px;cursor:pointer;">
+              <input type="radio" name="delivery_option" value="pickup" required
+                     style="margin-top:4px;" onchange="updateTotal(this.value)">
+              <span>
+                <strong>Pick Up Station — Free</strong><br>
+                <small style="color:#666;">CAC Goodnews Assembly, 24 Majaro Street, Pero Bus Stop, Agege, Lagos</small>
+              </span>
+            </label>
+
+            <label class="delivery-radio" style="display:flex;align-items:flex-start;gap:10px;margin-top:12px;cursor:pointer;">
+              <input type="radio" name="delivery_option" value="lagos"
+                     onchange="updateTotal(this.value)">
+              <span>
+                <strong>Door Delivery (Lagos) — ₦4,000</strong>
+              </span>
+            </label>
+
+            <label class="delivery-radio" style="display:flex;align-items:flex-start;gap:10px;margin-top:12px;cursor:pointer;">
+              <input type="radio" name="delivery_option" value="outside_lagos"
+                     onchange="updateTotal(this.value)">
+              <span>
+                <strong>Park Delivery (Outside Lagos) — ₦6,000</strong>
+              </span>
+            </label>
+          </div>
+
+          <!-- Dynamic totals -->
+          <div style="margin-top:16px;padding:12px 16px;background:#f5f5f5;border-radius:6px;">
+            <div style="display:flex;justify-content:space-between;">
+              <span>Subtotal</span><span>₦{{ total|floatformat:2 }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;">
+              <span>Shipping</span><span id="shipping-display">Select delivery option above</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:700;font-size:1.1em;">
+              <span>Total</span><span id="total-display">—</span>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-group" style="margin-top:20px;">
             <label class="form-label">PAYMENT METHOD</label>
             <div class="payment-method-options">
+              {% if paystack_live %}
               <label class="payment-method-chip">
                 <input type="radio" name="payment_method" value="paystack" checked required>
-                <span>
-                  <i class="fas fa-lock"></i> Paystack
-                </span>
+                <span style="color:inherit;"><i class="fas fa-lock"></i> Paystack</span>
               </label>
+              {% endif %}
               <label class="payment-method-chip">
-                <input type="radio" name="payment_method" value="flutterwave" required>
-                <span>
-                  <i class="fas fa-bolt"></i> Flutterwave
-                </span>
+                <input type="radio" name="payment_method" value="flutterwave"
+                       {% if not paystack_live %}checked{% endif %} required>
+                <span><i class="fas fa-bolt"></i> Flutterwave</span>
               </label>
             </div>
           </div>
@@ -108,11 +150,14 @@
             <div class="checkout-item">
               <div class="checkout-item-info">
                 {% if item.product.images %}
-                <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}" class="checkout-item-img">
+                  <img src="{{ item.product.images.url }}"
+                       alt="{{ item.product.product_name }}"
+                       class="checkout-item-img">
                 {% else %}
-                <div class="checkout-item-img" style="background:var(--color-card-bg);display:flex;align-items:center;justify-content:center;">
-                  <i class="fas fa-image" style="color:var(--color-border);font-size:20px;"></i>
-                </div>
+                  <div class="checkout-item-img"
+                       style="background:var(--color-card-bg);display:flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-image" style="color:var(--color-border);font-size:20px;"></i>
+                  </div>
                 {% endif %}
                 <div>
                   <p class="checkout-item-name">{{ item.product.product_name }}</p>
@@ -129,10 +174,16 @@
 
         <div class="summary-divider"></div>
 
-        <div class="summary-row"><span>Subtotal</span><span>₦{{ grand_total|floatformat:2 }}</span></div>
+        <div class="summary-row">
+          <span>Subtotal</span><span>₦{{ total|floatformat:2 }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span id="summary-shipping-display">—</span>
+        </div>
         <div class="summary-total">
           <span>TOTAL</span>
-          <span class="summary-total-amount">₦{{ grand_total|floatformat:2 }}</span>
+          <span class="summary-total-amount" id="order-summary-total">—</span>
         </div>
       </div>
 
@@ -140,4 +191,29 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var subtotal = {{ total }};
+  var fees     = { pickup: 0, lagos: 4000, outside_lagos: 6000 };
+
+  function updateTotal(option) {
+    var fee   = fees[option] || 0;
+    var total = subtotal + fee;
+
+    var shippingLabel = fee === 0
+      ? 'Free'
+      : '₦' + fee.toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    var totalLabel = '₦' + total.toLocaleString('en-NG', { minimumFractionDigits: 2 });
+
+    /* left-side summary block */
+    document.getElementById('shipping-display').textContent = shippingLabel;
+    document.getElementById('total-display').textContent    = totalLabel;
+
+    /* right-side YOUR ORDER block */
+    document.getElementById('summary-shipping-display').textContent = shippingLabel;
+    document.getElementById('order-summary-total').textContent      = totalLabel;
+  }
+</script>
 {% endblock %}

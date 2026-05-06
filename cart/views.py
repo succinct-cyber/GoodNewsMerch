@@ -3,6 +3,8 @@ from urllib.parse import quote
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
+
+from goodnews_merch import settings
 from .models import Cart, CartItem
 from store.models import Product, Variation
 from django.core.exceptions import ObjectDoesNotExist
@@ -165,7 +167,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         tax = 0
         grand_total = total + tax
     except ObjectDoesNotExist:
-        pass #just ignore
+        pass
 
     context = {
         'total': total,
@@ -173,6 +175,7 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         'cart_items': cart_items,
         'tax'       : tax,
         'grand_total': grand_total,
+        'paystack_live': getattr(settings, 'PAYSTACK_LIVE', False)
     }
     return render(request, 'store/checkout.html', context)
 
@@ -199,7 +202,6 @@ def buy_now(request, product_id):
             pass
 
     if request.user.is_authenticated:
-        # Logged-in: same grouping logic as add_cart
         cart_items    = CartItem.objects.filter(product=product, user=request.user)
         existing_item = None
         for item in cart_items:
@@ -220,7 +222,7 @@ def buy_now(request, product_id):
                 new_item.variations.set(product_variation)
             new_item.save()
     else:
-        # Guest: store in session cart
+        
         cart, _ = Cart.objects.get_or_create(cart_id=_cart_id(request))
         cart_items    = CartItem.objects.filter(product=product, cart=cart)
         existing_item = None

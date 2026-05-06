@@ -98,6 +98,12 @@
             <span>SUBTOTAL</span>
             <span>₦{{ total }}</span>
           </div>
+
+          <div class="summary-row">
+            <span>SHIPPING FEE</span>
+            <span>₦{{ order.shipping_fee }}</span>
+          </div>
+
           <div class="summary-row">
             <span>TAX</span>
             <span>₦{{ tax }}</span>
@@ -112,6 +118,18 @@
                   {% if paystack_key_missing %}disabled style="opacity:.6;cursor:not-allowed;"{% endif %}>
             <i class="fas fa-lock"></i> PAY ₦{{ grand_total }}
           </button>
+
+          {% if paystack_live %}
+            <button onclick="payWithPaystack()" class="btn btn-dark btn-full pay-btn"
+                    {% if paystack_key_missing %}disabled style="opacity:.6;cursor:not-allowed;"{% endif %}>
+              <i class="fas fa-lock"></i> PAY ₦{{ grand_total }} via Paystack
+            </button>
+          {% else %}
+            <div class="payment-error" style="display:flex;margin-top:0;margin-bottom:16px;">
+              <i class="fas fa-info-circle"></i>
+              Paystack is temporarily unavailable. Please use Flutterwave below.
+            </div>
+          {% endif %}
 
           {% if paystack_key_missing %}
             <div class="payment-error" style="display:flex;margin-top:16px;">

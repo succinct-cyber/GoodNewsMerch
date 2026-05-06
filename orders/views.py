@@ -44,7 +44,13 @@ def place_order(request, total=0, quantity=0):
         quantity += cart_item.quantity
 
     tax         = 0
-    grand_total = total + tax
+
+    delivery_option = request.POST.get('delivery_option', 'pickup')
+    shipping_fees   = {'pickup': 0, 'lagos': 4000, 'outside_lagos': 6000}
+    shipping_fee    = shipping_fees.get(delivery_option, 0)
+
+
+    grand_total = total + tax + shipping_fee
 
     form = OrderForm(request.POST)
 
@@ -63,6 +69,8 @@ def place_order(request, total=0, quantity=0):
         data.order_note     = form.cleaned_data['order_note']
         data.order_total    = grand_total
         data.tax            = tax
+        data.shipping_fee    = shipping_fee
+        data.delivery_option = delivery_option
         data.ip             = request.META.get('REMOTE_ADDR')
         data.save()
 
@@ -83,9 +91,12 @@ def place_order(request, total=0, quantity=0):
             'total'                 : total,
             'tax'                   : tax,
             'grand_total'           : grand_total,
+            'shipping_fee'          : shipping_fee,
+            'delivery_option'       : delivery_option,
             'paystack_public_key'   : settings.PAYSTACK_PUBLIC_KEY,
             'flutterwave_public_key': settings.FLUTTERWAVE_PUBLIC_KEY,
             'payment_method'        : payment_method,
+            'paystack_live'         : getattr(settings, 'PAYSTACK_LIVE', False)
         }
 
         if payment_method == 'flutterwave':
@@ -277,10 +288,11 @@ def guest_checkout(request):
     grand_total = total + tax
 
     context = {
-        'cart_items': cart_items,
-        'total'     : total,
-        'tax'       : tax,
-        'grand_total': grand_total,
+    'cart_items' : cart_items,
+    'total'      : total,
+    'tax'        : tax,
+    'grand_total': grand_total,
+    'paystack_live': getattr(settings, 'PAYSTACK_LIVE', False)
     }
     return render(request, 'orders/guest_checkout.html', context)
 
@@ -309,9 +321,13 @@ def guest_place_order(request):
         quantity += item.quantity
 
     tax         = 0
-    grand_total = total + tax
 
-    # Build order — no user FK required (guest)
+    delivery_option = request.POST.get('delivery_option', 'pickup')
+    shipping_fees   = {'pickup': 0, 'lagos': 4000, 'outside_lagos': 6000}
+    shipping_fee    = shipping_fees.get(delivery_option, 0)
+
+    grand_total = total + tax + shipping_fee
+
     data                = Order()
     data.user           = request.user if request.user.is_authenticated else None
     data.first_name     = request.POST.get('first_name', '')
@@ -326,6 +342,8 @@ def guest_place_order(request):
     data.order_note     = request.POST.get('order_note', '')
     data.order_total    = grand_total
     data.tax            = tax
+    data.shipping_fee    = shipping_fee
+    data.delivery_option = delivery_option
     data.ip             = request.META.get('REMOTE_ADDR')
     data.save()
 
@@ -344,10 +362,13 @@ def guest_place_order(request):
         'total'                 : total,
         'tax'                   : tax,
         'grand_total'           : grand_total,
+        'shipping_fee'          : shipping_fee,
+        'delivery_option'       : delivery_option,
         'paystack_public_key'   : pk,
         'paystack_key_missing'  : not bool(pk),
         'flutterwave_public_key': fw_pk,
         'payment_method'        : payment_method,
+        'paystack_live'         : getattr(settings, 'PAYSTACK_LIVE', False)
     }
 
     if payment_method == 'flutterwave':

@@ -25,12 +25,23 @@ class Order(models.Model):
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
     )
+
+    DELIVERY_CHOICES = [
+        ('pickup',        'Pick Up Station'),
+        ('lagos',         'Door Delivery (Lagos)'),
+        ('outside_lagos', 'Park Delivery (Outside Lagos)'),
+    ]
+    delivery_option = models.CharField(
+        max_length=20, choices=DELIVERY_CHOICES, default='pickup'
+    )
+
     user = models.ForeignKey(
         'accounts.Account',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
+
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=50)
@@ -44,6 +55,7 @@ class Order(models.Model):
     city = models.CharField(max_length=50)
     order_note = models.TextField(blank=True)
     order_total = models.FloatField()
+    shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     tax = models.FloatField(default=0.00)
     status = models.CharField(max_length=10, choices=STATUS, default='New')
     ip = models.CharField(blank=True, max_length=20)

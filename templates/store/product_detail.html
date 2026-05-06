@@ -57,7 +57,6 @@
       <p class="product-category">{{ single_product.category.category_name }}</p>
       <h1 class="product-title">{{ single_product.product_name }}</h1>
 
-      <!-- Inline star rating — no border, no section -->
       <div class="product-rating">
         {% with rating=single_product.avgReview|default:0 %}
           {% for i in "12345" %}
@@ -144,28 +143,42 @@
         {% endif %}
 
         <div class="product-actions">
-          {% if user.is_authenticated %}
-            <button type="submit" class="btn btn-outline btn-full"
-                    formaction="{% url 'add_cart' single_product.id %}">
-              <i class="fas fa-shopping-bag"></i> Add to cart
-            </button>
+          {% if single_product.stock > 0 %}
+            {% if user.is_authenticated %}
+              <!-- Authenticated: Add to Cart only, no Buy Now -->
+              <button type="submit" class="btn btn-dark btn-full"
+                      formaction="{% url 'add_cart' single_product.id %}">
+                <i class="fas fa-shopping-bag"></i> Add to Cart
+              </button>
+            {% else %}
+              <!-- Guest: both buttons -->
+              <a href="{% url 'login' %}?next={{ request.path|urlencode }}"
+                 class="btn btn-outline btn-full">
+                <i class="fas fa-shopping-bag"></i> Add to Cart
+              </a>
+              <button type="submit" class="btn btn-dark btn-full"
+                      formaction="{% url 'buy_now' single_product.id %}">
+                <i class="fas fa-bolt"></i> Buy Now
+              </button>
+            {% endif %}
           {% else %}
-            <a href="{% url 'login' %}?next={{ request.path|urlencode }}"
-               class="btn btn-outline btn-full">
-              <i class="fas fa-shopping-bag"></i> Add to cart
-            </a>
+            <!-- Out of stock: both buttons visible but dead -->
+            <button type="button" class="btn btn-outline btn-full"
+                    disabled style="opacity:0.4;cursor:not-allowed;">
+              <i class="fas fa-shopping-bag"></i> Add to Cart
+            </button>
+            <button type="button" class="btn btn-dark btn-full"
+                    disabled style="opacity:0.4;cursor:not-allowed;">
+              <i class="fas fa-bolt"></i> Buy Now
+            </button>
           {% endif %}
-          <button type="submit" class="btn btn-dark btn-full"
-                  formaction="{% url 'buy_now' single_product.id %}">
-            <i class="fas fa-bolt"></i> Buy now
-          </button>
         </div>
 
-        {% if not user.is_authenticated %}
+        {% if not user.is_authenticated and single_product.stock > 0 %}
           <p class="guest-note">
             <i class="fas fa-info-circle"></i>
             <span>
-              <strong>Buy now</strong> checks out as a guest.
+              <strong>Buy Now</strong> checks out as a guest.
               To save items in your cart,
               <a href="{% url 'login' %}?next={{ request.path|urlencode }}">sign in</a>.
             </span>
@@ -180,42 +193,43 @@
             In stock ({{ single_product.stock }} available)
           </p>
         {% else %}
-          <p>Currently out of stock.</p>
+          <p>
+            <i class="fas fa-times-circle" style="color:var(--color-danger);"></i>
+            Out of stock
+          </p>
         {% endif %}
       </div>
     </div>
 
-  </div><!-- end product-detail-inner -->
-</section><!-- end product-detail -->
+  </div>
+</section>
 
 
-<!-- ══ Reviews — outside the grid ══════════════════════════════ -->
+<!-- ══ Reviews ══════════════════════════════════════════════════ -->
 <section class="reviews-section">
   <div class="reviews-inner">
 
-    <!-- Write a Review -->
     <div class="write-review-wrap">
       <form action="{% url 'submit_review' single_product.id %}"
             method="POST" class="review-form">
         {% csrf_token %}
         <h3 class="write-review-title">WRITE A REVIEW</h3>
 
-        <!-- ★ Half-star enabled via overlapping labels technique -->
         <div class="form-group">
           <label class="form-label">YOUR RATING</label>
           <div class="rating">
-              <input type="radio" id="star10" name="rating" value="5" required><label for="star10" title="5"></label>
-              <input type="radio" id="star9" name="rating" value="4.5" required><label for="star9" title="4.5" class="half"></label>
-              <input type="radio" id="star8" name="rating" value="4" required><label for="star8" title="4"></label>
-              <input type="radio" id="star7" name="rating" value="3.5" required><label for="star7" title="3.5" class="half"></label>
-              <input type="radio" id="star6" name="rating" value="3" required><label for="star6" title="3"></label>
-              <input type="radio" id="star5" name="rating" value="2.5" required><label for="star5" title="2.5" class="half"></label>
-              <input type="radio" id="star4" name="rating" value="2" required><label for="star4" title="2"></label>
-              <input type="radio" id="star3" name="rating" value="1.5" required><label for="star3" title="1.5" class="half"></label>
-              <input type="radio" id="star2" name="rating" value="1" required><label for="star2" title="1"></label>
-              <input type="radio" id="star1" name="rating" value="0.5" required><label for="star1" title="0.5" class="half"></label>
+            <input type="radio" id="star10" name="rating" value="5" required><label for="star10" title="5"></label>
+            <input type="radio" id="star9"  name="rating" value="4.5" required><label for="star9"  title="4.5" class="half"></label>
+            <input type="radio" id="star8"  name="rating" value="4" required><label for="star8"  title="4"></label>
+            <input type="radio" id="star7"  name="rating" value="3.5" required><label for="star7"  title="3.5" class="half"></label>
+            <input type="radio" id="star6"  name="rating" value="3" required><label for="star6"  title="3"></label>
+            <input type="radio" id="star5"  name="rating" value="2.5" required><label for="star5"  title="2.5" class="half"></label>
+            <input type="radio" id="star4"  name="rating" value="2" required><label for="star4"  title="2"></label>
+            <input type="radio" id="star3"  name="rating" value="1.5" required><label for="star3"  title="1.5" class="half"></label>
+            <input type="radio" id="star2"  name="rating" value="1" required><label for="star2"  title="1"></label>
+            <input type="radio" id="star1"  name="rating" value="0.5" required><label for="star1"  title="0.5" class="half"></label>
           </div>
-        </div><!-- ← form-group correctly closed -->
+        </div>
 
         <div class="form-group">
           <label class="form-label">REVIEW TITLE</label>
@@ -244,11 +258,9 @@
             Please <a href="{% url 'login' %}">login</a> to submit a review.
           </p>
         {% endif %}
-
       </form>
     </div>
 
-    <!-- Reviews List -->
     <div class="reviews-list-wrap">
       <div class="reviews-list-header">
         <h3 class="reviews-list-title">CUSTOMER REVIEWS</h3>
@@ -282,7 +294,6 @@
                 <p class="review-date">{{ review.updated_at|date:"M d, Y" }}</p>
               </div>
             </div>
-            <!-- Whole+half stars based on stored rating -->
             <div class="review-stars">
               {% for i in "12345" %}
                 {% if forloop.counter <= review.rating %}
