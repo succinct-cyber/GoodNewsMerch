@@ -123,13 +123,13 @@
             <div class="payment-method-options">
               {% if paystack_live %}
               <label class="payment-method-chip">
-                <input type="submit" name="payment_method" value="paystack" checked required>
-                <span ><i class="fas fa-lock"></i> Paystack</span>
+                <input type="radio" name="payment_method" value="paystack" checked required>
+                <span><i class="fas fa-lock"></i> Paystack</span>
               </label>
               {% endif %}
               <label class="payment-method-chip">
-                <input type="submit" name="payment_method" value="flutterwave"
-                       {% if not paystack_live %}checked{% endif %} required>
+                <input type="radio" name="payment_method" value="flutterwave"
+                      {% if not paystack_live %}checked{% endif %} required>
                 <span><i class="fas fa-bolt"></i> Flutterwave</span>
               </label>
             </div>
