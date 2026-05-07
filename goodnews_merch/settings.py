@@ -48,6 +48,8 @@ if not DEBUG:
     USE_X_FORWARDED_HOST = True
 
 INSTALLED_APPS = [
+    'cloudinary',
+    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,6 +66,21 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
 ]
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY':    config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -82,14 +99,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
-# Cloudinary only when all credentials are set (avoids boot/collectstatic crash in prod without keys)
-_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
-_CLOUD_KEY = config('CLOUDINARY_API_KEY', default='')
-_CLOUD_SECRET = config('CLOUDINARY_API_SECRET', default='')
-USE_CLOUDINARY = bool(_CLOUD_NAME and _CLOUD_KEY and _CLOUD_SECRET)
-
-if USE_CLOUDINARY:
-    INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,7 +132,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'goodnews_merch.wsgi.application'
 
 _raw_database_url = config('DATABASE_URL', default='')
-# Hosting envs sometimes inject quotes/whitespace or an accidental trailing "\".
 _database_url = (
     _raw_database_url.strip().strip('"').strip("'").rstrip('\\').strip()
     if isinstance(_raw_database_url, str)
@@ -149,7 +157,6 @@ if _database_url and '://' in _database_url:
             )
         }
     except Exception as exc:
-        # In production we want a hard fail with a useful error message.
         if not DEBUG:
             raise ValueError(
                 f"Invalid DATABASE_URL value. Got: {_raw_database_url!r} (sanitized to {_database_url!r}). "
@@ -181,14 +188,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # ── Media ─────────────────────────────────────────────────────
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-if USE_CLOUDINARY:
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': _CLOUD_NAME,
-        'API_KEY': _CLOUD_KEY,
-        'API_SECRET': _CLOUD_SECRET,
-    }
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 AUTH_USER_MODEL = 'accounts.Account'
 
