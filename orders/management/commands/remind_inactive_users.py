@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
         targets = Account.objects.filter(
             is_active=True,
-            is_superadmin=False,
+            is_admin=False,
         ).exclude(id__in=users_with_orders)
 
         sent = 0

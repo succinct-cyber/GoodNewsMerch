@@ -13,7 +13,7 @@ class Command(BaseCommand):
         cutoff = timezone.now() - timedelta(hours=24)
         targets = Account.objects.filter(
             is_active=False,
-            is_superadmin=False,
+            is_admin=False,
             date_joined__lte=cutoff,
         )
 

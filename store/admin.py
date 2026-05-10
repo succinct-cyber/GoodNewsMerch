@@ -48,8 +48,8 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ReviewRating)
 class ReviewRatingAdmin(admin.ModelAdmin):
-    list_display  = ('user', 'product', 'rating', 'status', 'created_at')
-    list_editable = ('status', 'user', 'product', 'rating', 'ip')
-    list_filter   = ('status', 'product')
-    search_fields = ('user__email', 'product__product_name')
-    readonly_fields = ('')
+    list_display    = ('user', 'product', 'rating', 'status', 'created_at')
+    list_editable   = ('rating', 'status')         
+    list_filter     = ('status', 'product')
+    search_fields   = ('user__email', 'product__product_name')
+    readonly_fields = ('created_at',)              
