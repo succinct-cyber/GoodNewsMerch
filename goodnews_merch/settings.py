@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import dj_database_url
 from decouple import config
 
@@ -8,8 +7,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-
-# Railway: include subdomain wildcards via leading dot. Add your custom domain explicitly in env.
 ALLOWED_HOSTS = [
     h.strip()
     for h in config(
@@ -19,7 +16,6 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
-# Django does not accept wildcards like https://*.railway.app — merge env + auto https origins for concrete hosts
 _csrf_from_env = config('CSRF_TRUSTED_ORIGINS', default='')
 CSRF_TRUSTED_ORIGINS = [
     'https://goodnewsmerch.store',
@@ -43,13 +39,16 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    # Railway terminates TLS; forward proto/host from the edge proxy
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     USE_X_FORWARDED_HOST = True
 
+# ── Cloudinary credentials ─────────────────────────────────────
+_CLOUD_NAME   = config('CLOUDINARY_CLOUD_NAME', default='')
+_CLOUD_KEY    = config('CLOUDINARY_API_KEY', default='')
+_CLOUD_SECRET = config('CLOUDINARY_API_SECRET', default='')
+USE_CLOUDINARY = bool(_CLOUD_NAME and _CLOUD_KEY and _CLOUD_SECRET)
+
 INSTALLED_APPS = [
-    'cloudinary',
-    'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,47 +66,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 ]
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY':    config('CLOUDINARY_API_KEY'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET'),
-}
-
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
-
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
-}
-
-from datetime import timedelta
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME':  timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
-}
-
+if USE_CLOUDINARY:
+    INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -155,7 +115,6 @@ def _sqlite_db():
         }
     }
 
-
 if _database_url and '://' in _database_url:
     try:
         DATABASES = {
@@ -168,7 +127,8 @@ if _database_url and '://' in _database_url:
     except Exception as exc:
         if not DEBUG:
             raise ValueError(
-                f"Invalid DATABASE_URL value. Got: {_raw_database_url!r} (sanitized to {_database_url!r}). "
+                f"Invalid DATABASE_URL value. Got: {_raw_database_url!r} "
+                f"(sanitized to {_database_url!r}). "
                 "Expected e.g. postgres://user:pass@host:port/dbname"
             ) from exc
         DATABASES = _sqlite_db()
@@ -179,14 +139,70 @@ EMAIL_BACKEND = 'anymail.backends.brevo.EmailBackend'
 ANYMAIL = {
     'BREVO_API_KEY': config('BREVO_API_KEY', default=''),
 }
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@goodnewsmerch.store')
+DEFAULT_FROM_EMAIL = config(
+    'DEFAULT_FROM_EMAIL',
+    default='Yomi from GoodNews Merch <info@goodnewsmerch.store>'
+)
 
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY', default='')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY', default='')
-PAYSTACK_LIVE = config('PAYSTACK_LIVE', default=False, cast=bool)
+PAYSTACK_LIVE       = config('PAYSTACK_LIVE', default=False, cast=bool)
 
 FLUTTERWAVE_PUBLIC_KEY = config('FLUTTERWAVE_PUBLIC_KEY', default='')
 FLUTTERWAVE_SECRET_KEY = config('FLUTTERWAVE_SECRET_KEY', default='')
+
+# ── Static files ───────────────────────────────────────────────
+STATIC_URL    = '/static/'
+STATIC_ROOT   = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# ── Media files ────────────────────────────────────────────────
+MEDIA_URL  = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# ── Storage backends ───────────────────────────────────────────
+STORAGES = {
+    "default": {
+        # ✅ Cloudinary for media when credentials exist, filesystem otherwise
+        "BACKEND": (
+            'cloudinary_storage.storage.MediaCloudinaryStorage'
+            if USE_CLOUDINARY
+            else 'django.core.files.storage.FileSystemStorage'
+        ),
+    },
+    "staticfiles": {
+        # ✅ WhiteNoise for static files in production, plain in dev
+        "BACKEND": (
+            'whitenoise.storage.CompressedStaticFilesStorage'
+            if not DEBUG
+            else 'django.contrib.staticfiles.storage.StaticFilesStorage'
+        ),
+    },
+}
+
+if USE_CLOUDINARY:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': _CLOUD_NAME,
+        'API_KEY'   : _CLOUD_KEY,
+        'API_SECRET': _CLOUD_SECRET,
+    }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+}
 
 AUTH_USER_MODEL = 'accounts.Account'
 
@@ -198,12 +214,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Africa/Lagos'
-USE_I18N = True
-USE_TZ = True
+TIME_ZONE     = 'Africa/Lagos'
+USE_I18N      = True
+USE_TZ        = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 from django.contrib.messages import constants as messages
-
 MESSAGE_TAGS = {messages.ERROR: 'danger'}
