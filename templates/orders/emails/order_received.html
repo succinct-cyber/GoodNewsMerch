@@ -1,0 +1,20 @@
+<p>Hi {{ order.first_name }},</p>
+
+<p>
+  We've received your order and payment is confirmed. 
+  Our team is already on it.
+</p>
+
+<p><strong>Order Number:</strong> {{ order.order_number }}</p>
+<p><strong>Order Total:</strong> ₦{{ order.order_total }}</p>
+<p><strong>Delivery Option:</strong> {{ order.get_delivery_option_display }}</p>
+
+<p>We'll send you another update as your order progresses.</p>
+
+<p>
+  You can track your order anytime from your 
+  <a href="https://goodnewsmerch.store/accounts/dashboard/">dashboard</a>.
+</p>
+
+<p>Thank you for shopping with us.<br>
+— Yomi from GoodNews Merch</p>

@@ -91,6 +91,32 @@
 
         <a href="{% url 'my_orders' %}" class="btn btn-outline">&larr; Back to Orders</a>
 
+        <!-- Order Status Tracker -->
+        <div class="od-card" style="margin-bottom:20px;">
+          <p class="od-section-title">ORDER STATUS</p>
+
+          {% with status=order.status %}
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+
+            {% for step, label in order.STATUS %}
+              {% if step not in 'New,Completed' %}
+                <div style="display:flex;align-items:center;gap:12px;">
+                  {% if step == status %}
+                    <i class="fas fa-circle" style="color:var(--color-black);font-size:12px;"></i>
+                    <span style="font-weight:700;font-size:13px;">{{ label }}</span>
+                    <span style="font-size:11px;color:var(--color-text-muted);">← Current</span>
+                  {% elif forloop.counter < order.STATUS|length %}
+                    <i class="far fa-circle" style="color:var(--color-border);font-size:12px;"></i>
+                    <span style="font-size:13px;color:var(--color-text-muted);">{{ label }}</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+
+          </div>
+          {% endwith %}
+        </div>
+
       </div>
     </div>
   </div>

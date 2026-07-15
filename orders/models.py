@@ -19,12 +19,17 @@ class Payment(models.Model):
 
 
 class Order(models.Model):
-    STATUS = (
-        ('New', 'New'),
-        ('Accepted', 'Accepted'),
-        ('Completed', 'Completed'),
-        ('Cancelled', 'Cancelled'),
-    )
+    STATUS = [
+        ('New',          'New'),
+        ('Received',     'Order Received'),
+        ('Processing',   'Processing'),
+        ('Packed',       'Packed'),
+        ('With Rider',   'With Rider'),       
+        ('At Park',      'At Park'),           
+        ('Delivered',    'Delivered'),
+        ('Cancelled',    'Cancelled'),
+        ('Completed',    'Completed'),
+    ]
 
     DELIVERY_CHOICES = [
         ('pickup',        'Pick Up Station'),
@@ -57,7 +62,7 @@ class Order(models.Model):
     order_total = models.FloatField()
     shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     tax = models.FloatField(default=0.00)
-    status = models.CharField(max_length=10, choices=STATUS, default='New')
+    status = models.CharField(max_length=20, choices=STATUS, default='New')
     ip = models.CharField(blank=True, max_length=20)
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,0 +1,36 @@
+<p>Hi {{ order.first_name }},</p>
+
+<p>Here's a quick update on your GoodNews Merch order:</p>
+
+<p><strong>Order Number:</strong> {{ order.order_number }}</p>
+<p><strong>Current Status:</strong> {{ order.get_status_display }}</p>
+
+{% if order.status == 'Processing' %}
+  <p>Your order is being carefully packed and prepared for dispatch.</p>
+
+{% elif order.status == 'Packed' %}
+  <p>Your order is packed and ready to go. We'll notify you once it's on its way.</p>
+
+{% elif order.status == 'With Rider' %}
+  <p>Great news — your order is with our rider and on its way to you. 
+  Expect delivery soon!</p>
+
+{% elif order.status == 'At Park' %}
+  <p>Your order has been sent to the park and is ready for pickup. 
+  Please check with your park for collection.</p>
+
+{% elif order.status == 'Delivered' %}
+  <p>Your order has been delivered! We hope you love it. 
+  Feel free to leave a review on the product page.</p>
+
+{% elif order.status == 'Cancelled' %}
+  <p>Your order has been cancelled. If this was unexpected, 
+  please contact us at info@goodnewsmerch.store.</p>
+{% endif %}
+
+<p>
+  Track your order anytime from your 
+  <a href="https://goodnewsmerch.store/accounts/dashboard/">dashboard</a>.
+</p>
+
+<p>— Yomi from GoodNews Merch</p>

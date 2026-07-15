@@ -25,7 +25,6 @@ from accounts.models import UserProfile
 
 logger = logging.getLogger(__name__)
 
-# Create your views here.
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -47,10 +46,10 @@ def register(request):
             user.phone_number = phone_number
             user.save()
 
-            # Create user profile
+            
             UserProfile.objects.get_or_create(user=user)
 
-            # Send verification email
+           
             try:
                 current_site = get_current_site(request)
                 mail_subject = 'Please activate your account'
@@ -79,8 +78,13 @@ def register(request):
                 )
             return redirect(f'/accounts/login/?command=verification&email={email}')
         else:
-            print(form.errors)
-            messages.error(request, 'Please correct the errors below.')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        messages.error(request, error)
+                    else:
+                        label = form.fields[field].label or field.replace('_', ' ').title()
+                        messages.error(request, f'{label}: {error}')
     else:
         form = RegistrationForm()
 

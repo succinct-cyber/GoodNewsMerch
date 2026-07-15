@@ -22,8 +22,8 @@ class Command(BaseCommand):
             return
 
         Account.objects.create_superuser(
-            first_name='Admin',
-            last_name='User',
+            first_name='GoodNews',
+            last_name='Merch',
             email=email,
             username=username,
             password=password,
