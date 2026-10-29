@@ -64,12 +64,14 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
 ]
 
 if USE_CLOUDINARY:
     INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -198,11 +200,25 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
+CORS_ALLOWED_ORIGINS = [
+    'https://goodnewsmerch.store',
+    'https://www.goodnewsmerch.store',
+    'http://localhost:3000',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
 from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS' : True,
+    'BLACKLIST_AFTER_ROTATE': True,
 }
+
+# ── Google OAuth ───────────────────────────────────────────────
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
 
 AUTH_USER_MODEL = 'accounts.Account'
 
