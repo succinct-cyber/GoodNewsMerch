@@ -1,0 +1,15 @@
+{% extends 'accounts/email_base.html' %}
+{% block title %}Order received - GoodNews Merch{% endblock %}
+{% block content %}
+  <h2 style="margin:0 0 12px;font-size:20px;letter-spacing:3px;">WE'VE GOT YOUR ORDER</h2>
+  <p style="margin:0 0 22px;font-size:14px;color:#474747;line-height:1.7;">
+    Hi <strong>{{ order.first_name }}</strong>, your payment is confirmed and our team is already on it.
+  </p>
+  <div style="background:#F3F4F6;padding:18px;margin:0 0 22px;text-align:left;font-size:13px;color:#474747;line-height:1.9;">
+    <strong style="color:#1A1C1C;">Order:</strong> {{ order.order_number|slice:":4" }}&#8203;{{ order.order_number|slice:"4:" }}<br>
+    <strong style="color:#1A1C1C;">Total:</strong> ₦{{ order.order_total|floatformat:"2g" }}<br>
+    <strong style="color:#1A1C1C;">Delivery:</strong> {{ order.get_delivery_option_display }}
+  </div>
+  <p style="margin:0;font-size:14px;color:#474747;line-height:1.7;">We'll email you again as your order moves along.</p>
+{% endblock %}
+{% block footer %}Questions? Contact us at info@goodnewsmerch.store{% endblock %}

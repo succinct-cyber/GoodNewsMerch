@@ -1,0 +1,62 @@
+{% extends 'accounts/email_base.html' %}
+{% block title %}Order confirmed - GoodNews Merch{% endblock %}
+{% block content %}
+{% with site=site_url|default:"https://goodnewsmerch.store" %}
+  <h2 style="margin:0 0 8px;font-size:20px;letter-spacing:3px;">ORDER CONFIRMED!</h2>
+  <p style="margin:0 0 26px;font-size:14px;color:#474747;line-height:1.7;">
+    Hi <strong>{% if user %}{{ user.first_name }}{% else %}{{ order.first_name }}{% endif %}</strong>,
+    your order has been received and is being processed. We'll get it to you as soon as possible.
+  </p>
+
+  <div style="background:#F3F4F6;padding:18px;margin:0 0 28px;">
+    <p style="margin:0 0 4px;font-size:11px;color:#6B7280;letter-spacing:1px;">ORDER NUMBER</p>
+    {# zero-width space stops Gmail/iOS turning the digits into a blue "phone number" link #}
+    <p style="margin:0;font-size:22px;font-weight:700;letter-spacing:3px;color:#1A1C1C;">{{ order.order_number|slice:":4" }}&#8203;{{ order.order_number|slice:"4:" }}</p>
+  </div>
+
+  <div style="text-align:left;">
+    <p style="margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #E2E2E2;font-size:11px;font-weight:700;letter-spacing:2px;color:#474747;">ITEMS ORDERED</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+      {% for item in order.orderproduct_set.all %}
+      <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #E2E2E2;font-size:13px;color:#474747;vertical-align:top;">
+          <span style="font-weight:700;color:#1A1C1C;">{{ item.product.product_name }}</span>
+          {% for v in item.variations.all %}<br><span style="font-size:11px;color:#6B7280;">{{ v.variation_category|capfirst }}: {{ v.variation_value }}</span>{% endfor %}
+          <br><span style="font-size:11px;color:#6B7280;">Qty: {{ item.quantity }}</span>
+        </td>
+        <td align="right" style="padding:12px 0;border-bottom:1px solid #E2E2E2;font-size:13px;font-weight:700;color:#1A1C1C;white-space:nowrap;vertical-align:top;">
+          ₦{% widthratio item.product_price 1 item.quantity as line %}{{ line|floatformat:"0g" }}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <p style="margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #E2E2E2;font-size:11px;font-weight:700;letter-spacing:2px;color:#474747;">ORDER SUMMARY</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;font-size:13px;color:#474747;">
+      <tr><td style="padding:7px 0;">Subtotal</td><td align="right" style="padding:7px 0;">₦{{ order.subtotal|floatformat:"2g" }}</td></tr>
+      <tr><td style="padding:7px 0;">Shipping ({{ order.get_delivery_option_display }})</td>
+          <td align="right" style="padding:7px 0;">{% if order.shipping_fee %}₦{{ order.shipping_fee|floatformat:"2g" }}{% else %}Free{% endif %}</td></tr>
+      {% if order.tax %}<tr><td style="padding:7px 0;">Tax</td><td align="right" style="padding:7px 0;">₦{{ order.tax|floatformat:"2g" }}</td></tr>{% endif %}
+      <tr><td style="padding:12px 0 0;border-top:2px solid #1A1C1C;font-size:16px;font-weight:700;color:#1A1C1C;">TOTAL PAID</td>
+          <td align="right" style="padding:12px 0 0;border-top:2px solid #1A1C1C;font-size:16px;font-weight:700;color:#1A1C1C;">₦{{ order.order_total|floatformat:"2g" }}</td></tr>
+    </table>
+
+    <p style="margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #E2E2E2;font-size:11px;font-weight:700;letter-spacing:2px;color:#474747;">DELIVERY ADDRESS</p>
+    <div style="background:#F3F4F6;padding:16px;font-size:13px;color:#474747;line-height:1.8;">
+      <strong style="color:#1A1C1C;">{{ order.full_name }}</strong><br>
+      {{ order.full_address }}<br>{{ order.city }}, {{ order.state }}<br>{{ order.country }}<br>{{ order.phone }}
+    </div>
+  </div>
+
+  <div style="margin:30px 0 4px;">
+    {% if user %}
+    <a href="{{ site }}/dashboard/orders/{{ order.order_number }}"
+       style="display:inline-block;padding:14px 36px;background:#0A0A0A;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:2px;">TRACK MY ORDER</a>
+    {% else %}
+    <a href="{{ site }}/shop"
+       style="display:inline-block;padding:14px 36px;background:#0A0A0A;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:2px;">CONTINUE SHOPPING</a>
+    {% endif %}
+  </div>
+{% endwith %}
+{% endblock %}
+{% block footer %}GOODNEWS MERCH &mdash; Wear the Message, Share the News.<br>Questions? Contact us at info@goodnewsmerch.store{% endblock %}

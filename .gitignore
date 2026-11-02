@@ -1,27 +1,48 @@
-# Python
-staticfiles/
-__pycache__/
-*.pyc
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
 
-# Virtual environment
-env/
+# Python
 venv/
 .venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
 
 # Django
-db.sqlite3
 media/
+staticfiles/
 
-# Environment variables
-.env
+# Next.js
+node_modules/
+.next/
+out/
 
-# VS Code
-.vscode/
+# Build files
+dist/
+build/
 
-# OS
+# Platform binaries
+*.exe
+
+# Database backups
+*.dump
+*.sql
+*.bak
+
+# macOS
 .DS_Store
-Thumbs.db
+**/.DS_Store
 
+# Database backups
+*.dump
+*.sql
+*.bak
 
+# Executables
+*.exe
 
-
+# Local database backups
+*.sqlite3.backup
+*.db.backup

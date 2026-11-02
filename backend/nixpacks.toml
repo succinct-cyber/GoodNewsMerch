@@ -1,0 +1,9 @@
+# Nixpacks (Railway). Web process must listen on 0.0.0.0:$PORT (see scripts/start_web.sh).
+[phases.build]
+cmds = [
+  "pip install -r requirements.txt",
+  "python manage.py collectstatic --noinput",
+]
+
+[start]
+cmd = "sh scripts/start_web.sh"

@@ -1,0 +1,115 @@
+{% load static %}
+
+<nav class="navbar">
+  <div class="navbar-inner">
+
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="navbar-logo">
+      <img src="{% static 'images/logos/goodnews merch logo.svg' %}" alt="GoodNews Merch" class="logo-img">
+    </a>
+
+    <!-- Nav Links -->
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">HOME</a></li>
+      <li><a href="{% url 'shop' %}" class="{% if 'shop' in request.path %}active{% endif %}">SHOP</a></li>
+      <li><a href="{% url 'fundraising' %}" class="{% if 'fundraising' in request.path %}active{% endif %}">FUNDRAISING</a></li>
+      <li><a href="{% url 'contact' %}" class="{% if 'contact' in request.path %}active{% endif %}">CONTACT</a></li>
+    </ul>
+
+    <!-- Right Icons -->
+    <div class="navbar-icons">
+
+      <!-- User Dropdown -->
+      <div class="nav-user-wrap">
+        <button class="nav-icon user-icon-btn" id="userIconBtn">
+          <i class="fas fa-user"></i>
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="dropdown-item">
+              <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a href="{% url 'logout' %}" class="dropdown-item dropdown-logout">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          {% else %}
+            <a href="{% url 'login' %}" class="dropdown-item">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="{% url 'register' %}" class="dropdown-item">
+              <i class="fas fa-user-plus"></i> Register
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <!-- ↑ user-wrap closes here, NOT after search/cart -->
+
+      <!-- Search -->
+      <div class="search-container">
+        <button id="search-toggle" class="nav-icon">
+          <i class="fas fa-search"></i>
+        </button>
+        <form action="{% url 'search' %}" method="GET" id="search-form">
+          <input type="text" name="keyword" placeholder="Search products..." id="search-input">
+        </form>
+      </div>
+
+      <!-- Cart -->
+      <a href="{% url 'cart' %}" class="nav-icon cart-icon">
+        <i class="fas fa-shopping-bag"></i>
+        {% if cart_count > 0 %}
+          <span class="cart-badge">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+  </div>
+
+
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="{% url 'home' %}">HOME</a></li>
+      <li><a href="{% url 'shop' %}">SHOP</a></li>
+      <li><a href="{% url 'fundraising' %}">FUNDRAISING</a></li>
+      <li><a href="{% url 'contact' %}">CONTACT</a></li>
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}">MY ACCOUNT</a></li>
+        <li><a href="{% url 'logout' %}">LOGOUT</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}">LOGIN</a></li>
+        <li><a href="{% url 'register' %}">REGISTER</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<script>
+  // Search toggle
+  document.getElementById('search-toggle').addEventListener('click', () => {
+    const form = document.getElementById('search-form');
+    form.classList.toggle('active');
+    if (form.classList.contains('active')) {
+      document.getElementById('search-input').focus();
+    }
+  });
+
+  // User dropdown
+  document.getElementById('userIconBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('userDropdown').classList.toggle('open');
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nav-user-wrap')) {
+      document.getElementById('userDropdown').classList.remove('open');
+    }
+  });
+</script>

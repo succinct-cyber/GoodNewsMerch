@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@gnm_api_url",
+    "NEXT_PUBLIC_FLUTTERWAVE_KEY": "@gnm_flutterwave_key"
+  }
+}

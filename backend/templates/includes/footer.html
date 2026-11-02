@@ -1,0 +1,39 @@
+{% load static %}
+
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <!-- Brand -->
+    <div class="footer-brand">
+      <p class="footer-logo-text">GOODNEWS MERCH</p>
+      <p class="footer-tagline">24, MAJARO STREET, PERO BUS STOP, AGEGE, LAGOS STATE.</p>
+    </div>
+
+    <!-- Follow -->
+    <div class="footer-col">
+      <p class="footer-col-title">SOCIAL</p>
+      <ul>
+        <li><a href="https://www.instagram.com/goodnews.merch" target="_blank" rel="noopener">INSTAGRAM</a></li>
+        <li><a href="https://www.facebook.com/goodnews.merch" target="_blank" rel="noopener">FACEBOOK</a></li>
+        <li><a href="https://www.tiktok.com/@goodnewsmerch" target="_blank" rel="noopener">TIKTOK</a></li>
+        <li><a href="#" target="_blank" rel="noopener">YOUTUBE</a></li>
+        <li><a href="https://x.com/goodnews_merch" target="_blank" rel="noopener">TWITTER</a></li>
+      </ul>
+    </div>
+
+    <!-- Support -->
+    <div class="footer-col">
+      <p class="footer-col-title">LEGAL</p>
+      <ul>
+        <li><a href="{% url 'terms' %}">TERMS</a></li>
+        <li><a href="{% url 'privacy' %}">PRIVACY</a></li>
+      </ul>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-copyright">
+      <p>&copy; {% now "Y" %} GOODNEWS MERCH. ALL RIGHTS RESERVED.</p>
+    </div>
+
+  </div>
+</footer>

@@ -1,0 +1,24 @@
+{% extends 'accounts/email_base.html' %}
+{% block title %}Order update - GoodNews Merch{% endblock %}
+{% block content %}
+  <h2 style="margin:0 0 12px;font-size:20px;letter-spacing:3px;">ORDER UPDATE</h2>
+  <p style="margin:0 0 20px;font-size:14px;color:#474747;line-height:1.7;">
+    Hi <strong>{{ order.first_name }}</strong>, here's the latest on order
+    <strong>{{ order.order_number|slice:":4" }}&#8203;{{ order.order_number|slice:"4:" }}</strong>:
+  </p>
+  <div style="display:inline-block;padding:8px 20px;background:#0A0A0A;color:#ffffff;font-size:12px;font-weight:700;letter-spacing:2px;margin:0 0 20px;">{{ order.get_status_display|upper }}</div>
+  <p style="margin:0 0 24px;font-size:14px;color:#474747;line-height:1.7;">
+    {% if order.status == 'Processing' %}Your order is being carefully packed and prepared for dispatch.
+    {% elif order.status == 'Packed' %}Your order is packed and ready to go. We'll let you know once it's on its way.
+    {% elif order.status == 'With Rider' %}Great news &mdash; your order is with our rider and on its way to you. Expect delivery soon!
+    {% elif order.status == 'At Park' %}Your order has been sent to the park and is ready for collection. Please check with your park.
+    {% elif order.status == 'Delivered' %}Your order has been delivered. We hope you love it &mdash; a review on the product page would mean a lot.
+    {% elif order.status == 'Cancelled' %}Your order has been cancelled. If this was unexpected, please contact us at info@goodnewsmerch.store.
+    {% endif %}
+  </p>
+  {% if order.user %}
+  <a href="{{ site_url|default:'https://goodnewsmerch.store' }}/dashboard/orders/{{ order.order_number }}"
+     style="display:inline-block;padding:14px 36px;background:#0A0A0A;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:2px;">TRACK MY ORDER</a>
+  {% endif %}
+{% endblock %}
+{% block footer %}Questions? Contact us at info@goodnewsmerch.store{% endblock %}
