@@ -1,8 +1,8 @@
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-border py-10 px-4 sm:px-8">
-      <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1.5fr] gap-8 md:gap-10">
-        <div>
+      <div className="max-w-[1280px] mx-auto grid grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1.5fr] gap-8 md:gap-10">
+        <div className="col-span-2 md:col-span-1">
           <p className="text-[14px] font-bold tracking-[0.2em] text-text mb-2">GOODNEWS MERCH</p>
           <p className="text-[11px] text-text-muted tracking-wide uppercase">
             24, Majaro Street, Pero Bus Stop, Agege, Lagos State.
@@ -34,7 +34,7 @@ export default function Footer() {
             <li><a href="/privacy" className="text-[12px] text-text-muted tracking-wide hover:text-text transition-colors">PRIVACY</a></li>
           </ul>
         </div>
-        <div className="flex items-end justify-start md:justify-end">
+        <div className="col-span-2 md:col-span-1 flex items-end justify-start md:justify-end">
           <p className="text-[11px] text-text-muted tracking-wide">
             &copy; {new Date().getFullYear()} GOODNEWS MERCH. ALL RIGHTS RESERVED.
           </p>

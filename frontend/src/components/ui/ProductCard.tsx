@@ -23,6 +23,7 @@ export default function ProductCard({ product }: { product: Product }) {
             src={product.images}
             alt={product.product_name}
             width={400} height={400}
+            sizes="(min-width: 1024px) 33vw, 50vw"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
@@ -33,14 +34,14 @@ export default function ProductCard({ product }: { product: Product }) {
       </Link>
 
       {/* Info */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         <Link href={`/shop/${product.slug}`}
-          className="block text-[13px] font-bold tracking-wide uppercase
-            text-text mb-1 hover:opacity-70 transition-opacity">
+          className="block text-[11px] sm:text-[13px] font-bold tracking-wide uppercase leading-snug
+            line-clamp-2 text-text mb-1 hover:opacity-70 transition-opacity">
           {product.product_name}
         </Link>
         <StarRating rating={product.avg_review} count={product.count_review} />
-        <p className="text-[15px] font-semibold text-text mt-2">
+        <p className="text-[13px] sm:text-[15px] font-semibold text-text mt-1.5 sm:mt-2">
           ₦{Number(product.price).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
         </p>
       </div>

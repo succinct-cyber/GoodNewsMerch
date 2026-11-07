@@ -1,18 +1,30 @@
-import { Suspense } from 'react'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import { Product } from '@/types'
 import ProductCard from '@/components/ui/ProductCard'
 
+const API =
+  process.env.NEXT_PUBLIC_API_URL ||
+  'https://goodnewsmerch.onrender.com/api'
+
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'https://goodnewsmerch.onrender.com/api'}/products/?limit=3`,
-      { next: { revalidate: 60 } }
-    )
+    const res = await fetch(`${API}/products/`, {
+      next: { revalidate: 60 },
+    })
+
+    if (!res.ok) return []
+
     const data = await res.json()
-    return Array.isArray(data) ? data.slice(0, 3) : data.results?.slice(0, 3) ?? []
-  } catch { return [] }
+    const list: Product[] = Array.isArray(data)
+      ? data
+      : data.results ?? []
+
+    return list.slice(0, 3)
+  } catch {
+    return []
+  }
 }
 
 export default async function HomePage() {
@@ -20,101 +32,153 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="bg-page-bg min-h-[calc(72vh-70px)] flex items-center">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-4 sm:px-8 py-10 md:py-14 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
-          <div>
-            <h1 className="text-[32px] md:text-[56px] font-bold leading-none tracking-wide text-text mb-2">
+      {/* HERO */}
+      <section className="bg-page-bg">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-8
+          py-5 md:py-12 grid grid-cols-1 md:grid-cols-2
+          gap-5 md:gap-12 items-center">
+
+          {/* Image: first on mobile, right on desktop */}
+          <div className="order-1 md:order-2">
+            <Image
+              src="/images/items/heroo.png"
+              alt="GoodNews Merch collection"
+              width={560}
+              height={560}
+              priority
+              className="w-full h-auto max-h-[260px] md:max-h-[480px]
+                object-contain object-center"
+            />
+          </div>
+
+          {/* Text */}
+          <div className="order-2 md:order-1">
+            <h1 className="text-[30px] md:text-[42px]
+              font-bold leading-[1.05] tracking-wide text-text">
               WEAR THE
+              <span className="block text-[42px] md:text-[64px]
+                font-extrabold tracking-normal text-black">
+                MESSAGE
+              </span>
             </h1>
-            <span className="block text-[56px] md:text-[80px] font-extrabold leading-none
-              tracking-wide text-black mb-2">
-              MESSAGE
-            </span>
-            <h2 className="text-[24px] md:text-[32px] font-bold tracking-wide mb-3">
+
+            <h2 className="text-[19px] md:text-[24px]
+              font-bold tracking-wide mt-3">
               SHARE THE NEWS.
             </h2>
-            <p className="text-[14px] text-text-body mb-8">
+
+            <p className="text-[13px] text-text-body mt-3 mb-5">
               Wear your faith comfortably and in style.
             </p>
-            <Link href="/shop"
-              className="inline-flex items-center gap-2 bg-black text-white px-7 py-3
-                text-[12px] font-bold tracking-[0.15em] uppercase border-2 border-black
-                hover:bg-[#2a2a2a] transition-colors duration-200">
+
+            <Link
+              href="/shop"
+              className="flex md:inline-flex items-center justify-center
+                bg-black text-white border-2 border-black
+                px-7 py-3 text-[11px] font-bold tracking-[0.15em]
+                uppercase hover:bg-[#2a2a2a] transition-colors"
+            >
               SHOP THE DROP
             </Link>
-          </div>
-          <div className="order-first md:order-none">
-            <Image
-              src="/images/items/hero.png"
-              alt="GoodNews Merch Hero"
-              width={560} height={560}
-              className="w-full h-auto rounded-[2px] object-cover"
-              priority
-            />
           </div>
         </div>
       </section>
 
-      {/* ── Fundraising Banner ── */}
-      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 py-6">
-        <div className="relative aspect-[1920/600] overflow-hidden border border-border rounded-[2px]">
+      {/* FUNDRAISING */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-8 py-5 md:py-8">
+        <div className="relative overflow-hidden border border-border
+          min-h-[150px] md:min-h-0 md:aspect-[1920/600]">
+
           <Image
             src="/images/banners/FUND_RAISING_BANNER.png"
-            alt="Fundraising"
-            fill className="object-cover"
+            alt="Support our fundraising initiative"
+            fill
+            className="object-cover"
           />
-          <div className="absolute inset-0 flex items-start justify-end pt-[6%] pr-[6%]">
-            <Link href="/fundraising"
-              className="bg-black text-white px-8 py-3 text-[13px] font-bold
-                tracking-[0.2em] uppercase border-2 border-white
-                hover:bg-white hover:text-black transition-colors duration-200">
+
+          <div className="absolute inset-0 flex flex-col
+            items-start justify-between p-5 md:items-end
+            md:justify-start md:pt-[6%] md:pr-[6%]">
+
+            <div className="max-w-[75%] md:hidden">
+              <h2 className="text-[20px] font-bold uppercase">
+                Fund Raising
+              </h2>
+
+              <p className="text-[10px] leading-relaxed mt-2">
+                Every purchase you make here is more than just merch.
+                It's a seed sown into something greater.
+              </p>
+            </div>
+
+            <Link
+              href="/fundraising"
+              className="bg-black text-white px-7 py-3
+                text-[11px] font-bold tracking-[0.15em]
+                uppercase border-2 border-white
+                hover:bg-white hover:text-black transition-colors"
+            >
               PROCEED
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Popular Products ── */}
-      <section className="max-w-[1280px] mx-auto px-4 sm:px-8 py-16">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-[22px] font-bold tracking-[0.2em] uppercase text-text">
-            POPULAR PRODUCTS
+      {/* POPULAR PRODUCTS */}
+      <section className="max-w-[1280px] mx-auto px-4 md:px-8
+        py-6 md:py-10">
+
+        <div className="flex items-center justify-between gap-3 mb-5">
+          <h2 className="text-[15px] md:text-[19px]
+            font-bold tracking-[0.16em] uppercase text-text">
+            Popular Products
           </h2>
-          <Link href="/shop"
-            className="inline-flex items-center gap-2 bg-transparent text-text px-7 py-3
-              text-[12px] font-bold tracking-[0.15em] uppercase border-2 border-text
-              hover:bg-text hover:text-white transition-colors duration-200">
-            SEE ALL
+
+          <Link
+            href="/shop"
+            className="shrink-0 border-2 border-text text-text
+              px-4 py-2 text-[10px] font-bold tracking-[0.15em]
+              uppercase hover:bg-text hover:text-white transition-colors"
+          >
+            See all
           </Link>
         </div>
-        <Suspense fallback={
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1,2,3].map(i => (
-              <div key={i} className="bg-card-bg aspect-square animate-pulse rounded-[2px]" />
+
+        {products.length ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+            {products.map(product => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
-        }>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {products.map(p => <ProductCard key={p.id} product={p} />)}
-          </div>
-        </Suspense>
+        ) : (
+          <p className="text-center text-text-muted py-10 text-sm">
+            We couldn't load products just now. Please refresh in a moment.
+          </p>
+        )}
       </section>
 
-      {/* ── Dark CTA Banner ── */}
-      <section className="bg-black py-14 px-4 sm:px-8 text-center text-white">
+      {/* CLOSING BANNER */}
+      <section className="bg-black py-9 md:py-14 px-4 md:px-8
+        text-center text-white">
         <div className="max-w-[600px] mx-auto">
-          <h2 className="text-[20px] md:text-[32px] font-bold tracking-[0.15em] uppercase mb-4">
-            EVERY PURCHASE SUPPORTS A CAUSE.
+          <h2 className="text-[17px] md:text-[25px]
+            font-bold tracking-[0.12em] uppercase mb-3">
+            Every purchase supports a cause.
           </h2>
-          <p className="text-white/70 mb-8 text-[15px]">
-            A portion of every sale goes toward outreach programs and community development.
+
+          <p className="text-white/70 mb-6 text-[12px] md:text-[14px]">
+            GoodNews Merch donates a portion of its revenue to
+            CAC Goodnews Assembly after sales are completed.
           </p>
-          <Link href="/fundraising"
-            className="inline-flex items-center gap-2 bg-white text-black px-7 py-3
-              text-[12px] font-bold tracking-[0.15em] uppercase border-2 border-white
-              hover:bg-section-bg transition-colors duration-200">
-            LEARN MORE
+
+          <Link
+            href="/fundraising"
+            className="inline-flex items-center justify-center
+              bg-white text-black border-2 border-white
+              px-7 py-3 text-[11px] font-bold tracking-[0.15em]
+              uppercase hover:bg-gray-200 transition-colors"
+          >
+            Learn more
           </Link>
         </div>
       </section>

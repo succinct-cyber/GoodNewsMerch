@@ -208,6 +208,12 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = [
+    *default_headers,
+    "x-cart-id",
+]
 
 from datetime import timedelta
 SIMPLE_JWT = {

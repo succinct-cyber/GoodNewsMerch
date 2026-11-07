@@ -115,8 +115,8 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      <section className="py-12">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+      <section className="py-5 md:py-12">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16 items-start">
 
           {/* ── Gallery with Swiper ── */}
           <div className="flex flex-col gap-3">
@@ -178,6 +178,12 @@ export default function ProductDetailPage() {
               ₦{displayPrice.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </motion.p>
 
+            {qualityMod > 0 && (
+              <p className="text-[11px] text-text-muted mb-4">
+                Base ₦{Number(product.price).toLocaleString()} + ₦{qualityMod.toLocaleString()} quality upgrade
+              </p>
+            )}
+
             {product.description && (
               <p className="text-[14px] text-text-body leading-relaxed mb-6">
                 {product.description}
@@ -219,7 +225,7 @@ export default function ProductDetailPage() {
 
             {/* Buttons */}
             {product.stock > 0 ? (
-              <div className={`grid gap-3 mt-6 ${isAuthenticated ? 'grid-cols-1' : 'grid-cols-2'}`}>
+              <div className={`grid gap-3 mt-6 ${isAuthenticated ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
                 {isAuthenticated ? (
                   <Button variant="dark" full onClick={() => handleAddToCart()} loading={adding}>
                     <ShoppingBag size={15} />

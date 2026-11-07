@@ -257,7 +257,7 @@ export default function CheckoutPage() {
           </form>
 
           {/* Order Summary */}
-          <div className="bg-section-bg p-7 sticky top-[90px]">
+          <div className="bg-section-bg p-5 lg:p-7 order-first lg:order-none lg:sticky lg:top-[90px]">
             <h2 className="text-[11px] font-bold tracking-[0.15em] uppercase
               text-text-sub pb-3 mb-4 border-b border-border">
               YOUR ORDER

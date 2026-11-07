@@ -18,9 +18,14 @@ export function getCartId(): string {
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('access_token')
-    if (token) config.headers.Authorization = `Bearer ${token}`
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+
     config.headers['X-Cart-ID'] = getCartId()
   }
+
   return config
 })
 
