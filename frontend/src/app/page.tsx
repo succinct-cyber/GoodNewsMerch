@@ -41,7 +41,7 @@ export default async function HomePage() {
           {/* Image: first on mobile, right on desktop */}
           <div className="order-1 md:order-2">
             <Image
-              src="/images/items/heroo.png"
+              src="/images/items/hero.png"
               alt="GoodNews Merch collection"
               width={560}
               height={560}

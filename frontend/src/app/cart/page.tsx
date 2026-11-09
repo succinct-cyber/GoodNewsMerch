@@ -98,7 +98,8 @@ export default function CartPage() {
                       {fmt(unitPrice)}
                     </p>
 
-                    {/* Qty stepper */}
+                    {/* Qty + total: one row on phones; separate grid columns from md up */}
+                    <div className="flex items-center justify-between md:contents">
                     <div className="flex items-center border border-border h-9 w-fit">
                       <button onClick={() => updateItem(item.id, item.quantity - 1)}
                         className="w-9 h-full flex items-center justify-center
@@ -120,6 +121,7 @@ export default function CartPage() {
                     <p className="text-[15px] font-semibold text-right md:text-left">
                       {fmt(Number(item.sub_total))}
                     </p>
+                    </div>
                   </motion.div>
                 )
               })}

@@ -39,8 +39,8 @@ function LoginForm() {
   }
 
   return (
-    <section className="min-h-[calc(100vh-70px)]">
-      <div className="grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-70px)]">
+    <section className="min-h-[calc(100vh-70px)] md:portrait:min-h-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-70px)] md:portrait:min-h-0">
 
         {/* Left panel */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}

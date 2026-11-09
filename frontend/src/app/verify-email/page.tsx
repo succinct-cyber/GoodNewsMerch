@@ -23,7 +23,7 @@ function VerifyContent() {
   }, [uid, token])
 
   return (
-    <section className="min-h-[calc(100vh-70px)] flex items-center justify-center px-8">
+    <section className="min-h-[calc(100vh-70px)] md:portrait:min-h-0 flex items-center justify-center px-8">
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-[420px] bg-white border border-border p-10 text-center">
         {status === 'loading' && (
