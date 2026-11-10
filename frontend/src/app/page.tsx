@@ -31,58 +31,67 @@ export default async function HomePage() {
   const products = await getFeaturedProducts()
 
   return (
-    <>
+    <>      
       {/* HERO */}
       <section className="bg-page-bg">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-8
-          py-5 md:py-12 grid grid-cols-1 md:grid-cols-2
-          gap-5 md:gap-12 items-center">
+        <div className="max-w-[1280px] mx-auto px-3 sm:px-6 md:px-8
+          py-6 md:py-12 grid grid-cols-[1.15fr_0.85fr]
+          md:grid-cols-2 gap-2 sm:gap-5 md:gap-12 items-center">
 
-          {/* Image: first on mobile, right on desktop */}
-          <div className="order-1 md:order-2">
+          {/* Text: always on the left */}
+          <div className="min-w-0 order-1">
+            <h1 className="font-bold leading-[1.05] tracking-wide text-text">
+              <span className="block text-[clamp(16px,3.2vw,42px)]">
+                WEAR THE
+              </span>
+
+              <span className="block text-[clamp(24px,6vw,64px)]
+                font-extrabold tracking-normal text-black mt-1">
+                MESSAGE
+              </span>
+            </h1>
+
+            <h2 className="text-[clamp(12px,2.2vw,24px)]
+              font-bold tracking-wide mt-2 md:mt-3">
+              SHARE THE NEWS.
+            </h2>
+
+            <p className="text-[clamp(9px,1.3vw,13px)]
+              text-text-body mt-2 md:mt-3 mb-3 md:mb-5">
+              Wear your faith comfortably and in style.
+            </p>
+
+            <Link
+              href="/shop"
+              className="flex items-center justify-center
+                bg-black text-white border-2 border-black
+                px-2 sm:px-5 md:px-7 py-2 sm:py-3
+                text-[9px] sm:text-[10px] md:text-[11px]
+                font-bold tracking-[0.1em] md:tracking-[0.15em]
+                uppercase hover:bg-[#2a2a2a] transition-colors"
+            >
+              SHOP THE DROP
+            </Link>
+          </div>
+
+          {/* Hero image: always on the right */}
+          <div className="min-w-0 order-2">
             <Image
               src="/images/items/hero.png"
               alt="GoodNews Merch collection"
               width={560}
               height={560}
               priority
-              className="w-full h-auto max-h-[260px] md:max-h-[480px]
+              sizes="(max-width: 767px) 45vw, 50vw"
+              className="block w-full h-auto max-h-[240px]
+                sm:max-h-[320px] md:max-h-[480px]
                 object-contain object-center"
             />
           </div>
 
-          {/* Text */}
-          <div className="order-2 md:order-1">
-            <h1 className="text-[30px] md:text-[42px]
-              font-bold leading-[1.05] tracking-wide text-text">
-              WEAR THE
-              <span className="block text-[42px] md:text-[64px]
-                font-extrabold tracking-normal text-black">
-                MESSAGE
-              </span>
-            </h1>
-
-            <h2 className="text-[19px] md:text-[24px]
-              font-bold tracking-wide mt-3">
-              SHARE THE NEWS.
-            </h2>
-
-            <p className="text-[13px] text-text-body mt-3 mb-5">
-              Wear your faith comfortably and in style.
-            </p>
-
-            <Link
-              href="/shop"
-              className="flex md:inline-flex items-center justify-center
-                bg-black text-white border-2 border-black
-                px-7 py-3 text-[11px] font-bold tracking-[0.15em]
-                uppercase hover:bg-[#2a2a2a] transition-colors"
-            >
-              SHOP THE DROP
-            </Link>
-          </div>
         </div>
       </section>
+
 
       
     {/* FUNDRAISING */}
