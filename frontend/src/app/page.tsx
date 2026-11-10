@@ -84,27 +84,34 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* FUNDRAISING */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-8 py-5 md:py-8">
-        <div className="relative w-full overflow-hidden border border-border">
-          <Image
-            src="/images/banners/FUND_RAISING_BANNER.png"
-            alt="GoodNews Merch fundraising initiative"
-            width={922}
-            height={346}
-            sizes="(max-width: 1280px) 100vw, 1280px"
-            className="block w-full h-auto"
-          />
+      
+    {/* FUNDRAISING */}
+    <section className="max-w-[1280px] mx-auto px-4 md:px-8 py-5 md:py-8">
+      <div className="relative w-full overflow-hidden border border-border">
+        <Image
+          src="/images/banners/FUND_RAISING_BANNER.png"
+          alt="GoodNews Merch fundraising initiative"
+          width={922}
+          height={346}
+          sizes="(max-width: 1280px) 100vw, 1280px"
+          className="block w-full h-auto"
+        />
 
-          {/* Transparent clickable area over the original PROCEED button */}
-          <Link
-            href="/fundraising"
-            aria-label="Proceed to fundraising"
-            className="absolute top-[22.3%] right-[11.7%]
-              w-[12.7%] h-[11.6%]"
-          />
-        </div>
-      </section>
+        <Link
+          href="/fundraising"
+          className="absolute top-[22.5%] right-[9.5%]
+            inline-flex items-center justify-center
+            bg-black text-white
+            px-3 py-2 sm:px-5 sm:py-2.5 md:px-7 md:py-3
+            text-[8px] sm:text-[10px] md:text-[11px]
+            font-bold tracking-[0.12em] uppercase
+            hover:bg-[#2a2a2a] transition-colors"
+        >
+          PROCEED
+        </Link>
+      </div>
+    </section>
+
 
 
       {/* POPULAR PRODUCTS */}
