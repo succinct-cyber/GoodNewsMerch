@@ -86,43 +86,26 @@ export default async function HomePage() {
 
       {/* FUNDRAISING */}
       <section className="max-w-[1280px] mx-auto px-4 md:px-8 py-5 md:py-8">
-        <div className="relative overflow-hidden border border-border
-          min-h-[150px] md:min-h-0 md:aspect-[1920/600]">
-
+        <div className="relative w-full overflow-hidden border border-border">
           <Image
             src="/images/banners/FUND_RAISING_BANNER.png"
-            alt="Support our fundraising initiative"
-            fill
-            className="object-cover"
+            alt="GoodNews Merch fundraising initiative"
+            width={922}
+            height={346}
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="block w-full h-auto"
           />
 
-          <div className="absolute inset-0 flex flex-col
-            items-start justify-between p-5 md:items-end
-            md:justify-start md:pt-[6%] md:pr-[6%]">
-
-            <div className="max-w-[75%] md:hidden">
-              <h2 className="text-[20px] font-bold uppercase">
-                Fund Raising
-              </h2>
-
-              <p className="text-[10px] leading-relaxed mt-2">
-                Every purchase you make here is more than just merch.
-                It's a seed sown into something greater.
-              </p>
-            </div>
-
-            <Link
-              href="/fundraising"
-              className="bg-black text-white px-7 py-3
-                text-[11px] font-bold tracking-[0.15em]
-                uppercase border-2 border-white
-                hover:bg-white hover:text-black transition-colors"
-            >
-              PROCEED
-            </Link>
-          </div>
+          {/* Transparent clickable area over the original PROCEED button */}
+          <Link
+            href="/fundraising"
+            aria-label="Proceed to fundraising"
+            className="absolute top-[22.3%] right-[11.7%]
+              w-[12.7%] h-[11.6%]"
+          />
         </div>
       </section>
+
 
       {/* POPULAR PRODUCTS */}
       <section className="max-w-[1280px] mx-auto px-4 md:px-8
