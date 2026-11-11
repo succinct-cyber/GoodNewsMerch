@@ -178,7 +178,7 @@ export default function Navbar() {
           <motion.div
             initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
-            className="min-[900px]:hidden overflow-hidden bg-white border-t border-border"s>
+            className="min-[900px]:hidden overflow-hidden bg-white border-t border-border">
             <ul className="flex flex-col gap-4 px-4 sm:px-8 py-5">
               {NAV_LINKS.map(({ href, label }) => (
                 <li key={href}>
