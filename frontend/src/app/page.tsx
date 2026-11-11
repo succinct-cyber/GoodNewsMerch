@@ -31,66 +31,63 @@ export default async function HomePage() {
   const products = await getFeaturedProducts()
 
   return (
-    <>      
-      {/* HERO */}
-      <section className="bg-page-bg">
-        <div className="max-w-[1280px] mx-auto px-3 sm:px-6 md:px-8
-          py-6 md:py-12 grid grid-cols-[1.15fr_0.85fr]
-          md:grid-cols-2 gap-2 sm:gap-5 md:gap-12 items-center">
+    <>            
+      <section className="relative w-full overflow-hidden bg-black">
+  <div className="relative w-full">
+    <img
+      src="/images/items/heero.png"
+      alt="GoodNews Merch Omo Olorun collection"
+      className="block w-full h-auto"
+    />
 
-          {/* Text: always on the left */}
-          <div className="min-w-0 order-1">
-            <h1 className="font-bold leading-[1.05] tracking-wide text-text">
-              <span className="block text-[clamp(16px,3.2vw,42px)]">
-                WEAR THE
-              </span>
+    {/* Dark gradient */}
+    <div
+      className="absolute inset-0 z-10 pointer-events-none"
+      style={{
+        background:
+          "linear-gradient(90deg, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.58) 35%, rgba(0,0,0,0.20) 60%, transparent 80%)",
+      }}
+    />
 
-              <span className="block text-[clamp(24px,6vw,64px)]
-                font-extrabold tracking-normal text-black mt-1">
-                MESSAGE
-              </span>
-            </h1>
+    {/* Hero content */}
+    <div className="absolute inset-0 z-20 flex items-center">
+      <div className="w-full max-w-[1280px] mx-auto px-4 md:px-8">
+        <div className="w-[50%] text-white">
 
-            <h2 className="text-[clamp(12px,2.2vw,24px)]
-              font-bold tracking-wide mt-2 md:mt-3">
-              SHARE THE NEWS.
-            </h2>
+          <h1 className="uppercase leading-none">
+            <span className="block text-[length:clamp(16px,2.2vw,44px)] font-normal">
+              Wear the
+            </span>
+            <span className="block text-[length:clamp(26px,3.6vw,72px)] font-extrabold leading-[1] mt-1">
+              Message
+            </span>
+          </h1>
 
-            <p className="text-[clamp(9px,1.3vw,13px)]
-              text-text-body mt-2 md:mt-3 mb-3 md:mb-5">
-              Wear your faith comfortably and in style.
-            </p>
+          <h2 className="uppercase text-[length:clamp(13px,1.6vw,32px)] font-bold mt-[clamp(14px,2.6vw,50px)]">
+            Share the news.
+          </h2>
 
-            <Link
-              href="/shop"
-              className="flex items-center justify-center
-                bg-black text-white border-2 border-black
-                px-2 sm:px-5 md:px-7 py-2 sm:py-3
-                text-[9px] sm:text-[10px] md:text-[11px]
-                font-bold tracking-[0.1em] md:tracking-[0.15em]
-                uppercase hover:bg-[#2a2a2a] transition-colors"
-            >
-              SHOP THE DROP
-            </Link>
-          </div>
+          <p className="text-[length:clamp(9px,0.85vw,17px)] font-normal text-white/90 mt-[clamp(6px,1vw,18px)]">
+            Wear your faith comfortably and in style.
+          </p>
 
-          {/* Hero image: always on the right */}
-          <div className="min-w-0 order-2">
-            <Image
-              src="/images/items/hero.png"
-              alt="GoodNews Merch collection"
-              width={560}
-              height={560}
-              priority
-              sizes="(max-width: 767px) 45vw, 50vw"
-              className="block w-full h-auto max-h-[240px]
-                sm:max-h-[320px] md:max-h-[480px]
-                object-contain object-center"
-            />
-          </div>
+          <Link
+            href="/shop"
+            className="inline-flex w-fit items-center justify-center bg-black text-white border-2 border-black
+              px-4 sm:px-6 md:px-[30px] py-2 sm:py-3 md:py-[16px]
+              mt-[clamp(10px,1.6vw,30px)]
+              text-[8px] sm:text-[10px] md:text-[11px] font-bold
+              tracking-[0.15em] whitespace-nowrap uppercase
+              hover:bg-white hover:text-black transition-colors"
+          >
+            Shop the drop
+          </Link>
 
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
 
       

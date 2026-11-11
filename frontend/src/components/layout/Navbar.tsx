@@ -68,7 +68,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop links (lg+) */}
-        <ul className="hidden lg:flex items-center gap-7 xl:gap-9">
+        <ul className="hidden min-[900px]:flex items-center gap-4 min-[1100px]:gap-7 xl:gap-9">
           {NAV_LINKS.map(({ href, label }) => (
             <li key={href}>
               <Link href={href}
@@ -83,7 +83,7 @@ export default function Navbar() {
           ))}
         </ul>
         {/* keeps the grid's middle column present below lg so icons stay right-aligned */}
-        <span className="lg:hidden" />
+        <span className="min-[900px]:hidden" />
 
         {/* Icons — solid set, same as the old site */}
         <div className="col-start-3 row-start-1 justify-self-end flex items-center gap-3 sm:gap-5 text-text">
@@ -144,7 +144,12 @@ export default function Navbar() {
             )}
           </Link>
 
-          <button className="lg:hidden" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
+          <button
+            className="min-[900px]:hidden"
+            onClick={() => setMobileOpen(o => !o)}
+            aria-label="Menu"
+            aria-expanded={mobileOpen}
+          >
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -173,7 +178,7 @@ export default function Navbar() {
           <motion.div
             initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
-            className="lg:hidden overflow-hidden bg-white border-t border-border">
+            className="min-[900px]:hidden overflow-hidden bg-white border-t border-border"s>
             <ul className="flex flex-col gap-4 px-4 sm:px-8 py-5">
               {NAV_LINKS.map(({ href, label }) => (
                 <li key={href}>
