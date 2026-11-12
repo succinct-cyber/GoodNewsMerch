@@ -178,12 +178,6 @@ export default function ProductDetailPage() {
               ₦{displayPrice.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
             </motion.p>
 
-            {qualityMod > 0 && (
-              <p className="text-[11px] text-text-muted mb-4">
-                Base ₦{Number(product.price).toLocaleString()} + ₦{qualityMod.toLocaleString()} quality upgrade
-              </p>
-            )}
-
             {product.description && (
               <p className="text-[14px] text-text-body leading-relaxed mb-6">
                 {product.description}
