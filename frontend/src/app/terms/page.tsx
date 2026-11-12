@@ -34,7 +34,7 @@ export default function TermsPage() {
             5–7 business days. We do not accept returns for change-of-mind purchases.`],
           ['6. CANCELLATIONS', `Orders may be cancelled within 12 hours of placement at no charge.
             Once processed or dispatched, cancellation is not possible.`],
-          ['7. CONTACT', `For any issues or enquiries, contact info@goodnewsmerch.store.`],
+          ['7. CONTACT', `For any issues or enquiries, contact info.goodnewsmerch@zohomail.com.`],
         ].map(([title, body]) => (
           <div key={title} className="mb-8">
             <h3 className="text-[13px] font-bold tracking-[0.15em] uppercase mb-3">

@@ -24,7 +24,7 @@ export default function PrivacyPage() {
             advertising cookies are used.`],
           ['YOUR RIGHTS', `You may request deletion of your account and data at any time by emailing
             info@goodnewsmerch.store.`],
-          ['CONTACT', `For privacy-related enquiries, contact info@goodnewsmerch.store.`],
+          ['CONTACT', `For privacy-related enquiries, contact info.goodnewsmerch@zohomail.com.`],
         ].map(([title, body]) => (
           <div key={title} className="mb-8">
             <h3 className="text-[13px] font-bold tracking-[0.15em] uppercase mb-3">{title}</h3>

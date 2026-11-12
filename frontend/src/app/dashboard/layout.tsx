@@ -38,8 +38,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <section className="py-8 md:py-10">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 md:gap-10 items-start">
 
-        {/* Desktop sidebar */}
-        <aside className="hidden md:block md:sticky md:top-[94px] bg-white border border-border p-6">
+        {/* Profile + menu card: stacked on top on mobile, sticky sidebar on desktop */}
+        <aside className="md:sticky md:top-[94px] bg-white border border-border p-5 md:p-6">
           <div className="flex items-center gap-3 pb-5 mb-4 border-b border-border">
             {profile?.profile_picture ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -73,23 +73,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </button>
           </nav>
         </aside>
-
-        {/* Mobile: same four links as a scrollable pill bar */}
-        <nav className="md:hidden flex gap-2 overflow-x-auto pb-1 -mx-4 px-4">
-          {LINKS.map(l => (
-            <Link key={l.href} href={l.href}
-              className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase
-                tracking-wide border transition-colors
-                ${active(l) ? 'bg-black text-white border-black' : 'bg-white text-text-sub border-border'}`}>
-              <l.icon size={12} /> {l.label}
-            </Link>
-          ))}
-          <button onClick={handleLogout}
-            className="flex-shrink-0 flex items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase
-              tracking-wide border border-border bg-white text-danger">
-            <FaPowerOff size={11} /> Log out
-          </button>
-        </nav>
 
         <div className="min-w-0">{children}</div>
       </div>

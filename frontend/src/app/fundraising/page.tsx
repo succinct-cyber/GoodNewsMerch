@@ -7,15 +7,16 @@ export default function FundraisingPage() {
   return (
     <div className="pb-14">
       {/* Hero */}
-      <div className="bg-black py-14 px-4 sm:px-8">
-        <div className="max-w-[760px] mx-auto">
-          <h1 className="text-[48px] md:text-[72px] font-bold tracking-[0.3em]
-            text-white leading-none mb-5">
-            FUNDRAISER
-          </h1>
-          <div className="w-[60px] h-[3px] bg-white" />
-        </div>
+      <div className="bg-black py-14 px-4 sm:px-8 overflow-hidden">
+      <div className="max-w-[760px] mx-auto">
+        <h1 className="text-[28px] min-[400px]:text-[34px] sm:text-[48px] md:text-[72px]
+          font-bold tracking-[0.12em] sm:tracking-[0.25em] md:tracking-[0.3em]
+          text-white leading-none mb-5 break-words">
+          FUNDRAISER
+        </h1>
+        <div className="w-[60px] h-[3px] bg-white" />
       </div>
+    </div>
 
       {/* Content */}
       <div className="max-w-[760px] mx-auto px-4 sm:px-8 pt-12">
