@@ -23,6 +23,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
 from accounts.models import Account, UserProfile
+from accounts.security import turnstile_ok
 from store.models import Product, Variation, ReviewRating
 from category.models import Category
 from cart.models import Cart, CartItem
@@ -33,6 +34,7 @@ from .serializers import (
     CategorySerializer, ProductListSerializer, ProductDetailSerializer,
     ReviewSerializer, CartItemSerializer, OrderSerializer,
 )
+
 
 DONE = ('Delivered', 'Completed')
 
@@ -50,9 +52,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
+    throttle_scope = "register"
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
+        if not turnstile_ok(request.data.get("turnstile_token")):
+                    return Response({"detail": "Verification failed."}, status=400)
         serializer = RegisterSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -106,6 +111,7 @@ class VerifyEmailView(APIView):
 # ── Login ─────────────────────────────────────────────────────
 
 class LoginView(APIView):
+    throttle_scope = "login"
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):

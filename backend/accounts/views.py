@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from accounts.utils import send_email_via_sendgrid
 from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
+from .security import turnstile_ok
 from orders.models import Order, OrderProduct
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
@@ -28,6 +29,9 @@ logger = logging.getLogger(__name__)
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
+        if not turnstile_ok(request.POST.get("cf-turnstile-response")):
+            messages.error(request, "Verification failed, please refresh and retry.")
+            return render(request, "accounts/register.html", {"form": form})
         if form.is_valid():
             first_name   = form.cleaned_data['first_name']
             last_name    = form.cleaned_data['last_name']
