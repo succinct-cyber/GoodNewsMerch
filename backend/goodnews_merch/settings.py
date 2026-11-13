@@ -11,7 +11,7 @@ ALLOWED_HOSTS = [
     h.strip()
     for h in config(
         'ALLOWED_HOSTS',
-        default='.railway.app,.up.railway.app,localhost,127.0.0.1',
+        default='.railway.app,.up.railway.app,localhost,127.0.0.1,api.goodnewsmerch.store'
     ).split(',')
     if h.strip()
 ]
