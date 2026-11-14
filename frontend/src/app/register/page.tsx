@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -19,6 +20,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [errors,  setErrors]  = useState<Record<string, string>>({})
   const [success, setSuccess] = useState('')
+  const [token, setToken] = useState<string | null>(null)
+const widget = useRef<TurnstileInstance>(null) 
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
@@ -28,20 +31,24 @@ export default function RegisterPage() {
     if (form.password !== form.confirm_password) {
       setErrors({ confirm_password: 'Passwords do not match.' }); return
     }
+    if (!token) return                                
     setLoading(true); setErrors({})
     try {
-      const { data } = await api.post('/auth/register/', form)
+      const { data } = await api.post('/auth/register/', { ...form, turnstile_token: token })
       setSuccess(data.message)
     } catch (err: any) {
       const d = err.response?.data
-      if (typeof d === 'object') {
-        // Flatten DRF field errors
+      if (d && typeof d === 'object') {
         const flat: Record<string, string> = {}
         Object.entries(d).forEach(([k, v]) => {
           flat[k] = Array.isArray(v) ? (v as string[]).join(' ') : String(v)
         })
         setErrors(flat)
+      } else {
+        setErrors({ non_field_errors: 'Something went wrong. Please try again.' })
       }
+      widget.current?.reset()                              // tokens are single-use
+      setToken(null)
     } finally {
       setLoading(false)
     }
@@ -84,9 +91,9 @@ export default function RegisterPage() {
               </motion.div>
             ) : (
               <>
-                {errors.non_field_errors && (
+                {(errors.non_field_errors || errors.detail) && (
                   <p className="text-danger text-[13px] mb-5 p-3 bg-red-50 border-l-4 border-danger">
-                    {errors.non_field_errors}
+                    {errors.non_field_errors || errors.detail}
                   </p>
                 )}
 
@@ -151,9 +158,19 @@ export default function RegisterPage() {
                     </div>
                   ))}
 
-                  <Button type="submit" variant="dark" full loading={loading} className="mt-2">
-                    CREATE ACCOUNT
-                  </Button>
+                    <div className="mb-5">
+                      <Turnstile
+                        ref={widget}
+                        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                        onSuccess={setToken}
+                        onExpire={() => setToken(null)}      // tokens expire after about 5 minutes
+                        onError={() => setToken(null)}
+                      />
+                    </div>
+
+                    <Button type="submit" variant="dark" full loading={loading} disabled={!token} className="mt-2">
+                      CREATE ACCOUNT
+                    </Button>
                 </form>
 
                 <div className="mt-6"><GoogleButton /></div>
