@@ -11,12 +11,12 @@ ALLOWED_HOSTS = [
     h.strip()
     for h in config(
         'ALLOWED_HOSTS',
-        default='.railway.app,.up.railway.app,localhost,127.0.0.1,api.goodnewsmerch.store'
+        default='.railway.app,.up.railway.app,localhost,127.0.0.1,api.goodnewsmerch.store,goodnewsmerch.onrender.com'
     ).split(',')
     if h.strip()
 ]
 
-_csrf_from_env = config('CSRF_TRUSTED_ORIGINS', default='')
+_csrf_from_env = config('CSRF_TRUSTED_ORIGINS', default='CORS_ALLOWED_ORIGINS + ["https://api.goodnewsmerch.store"]')
 CSRF_TRUSTED_ORIGINS = [
     'https://goodnewsmerch.store',
     'https://www.goodnewsmerch.store',
@@ -195,7 +195,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,

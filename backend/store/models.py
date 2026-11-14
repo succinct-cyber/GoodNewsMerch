@@ -19,6 +19,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'product'
         verbose_name_plural = 'products'
+        ordering = ['-id']
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.slug, self.slug])

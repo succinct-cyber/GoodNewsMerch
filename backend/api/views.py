@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.permissions import AllowAny
 
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
@@ -53,7 +54,7 @@ logger = logging.getLogger(__name__)
 
 class RegisterView(APIView):
     throttle_scope = "register"
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         if not turnstile_ok(request.data.get("turnstile_token")):
@@ -88,7 +89,7 @@ class RegisterView(APIView):
 # ── Email Verification ────────────────────────────────────────
 
 class VerifyEmailView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         uid   = request.data.get('uid')
