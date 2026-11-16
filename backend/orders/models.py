@@ -8,7 +8,7 @@ class Payment(models.Model):
         null=True,
         blank=True,
     )
-    payment_id = models.CharField(max_length=100)
+    payment_id = models.CharField(max_length=100, unique=True)
     payment_method = models.CharField(max_length=100)
     amount_paid = models.CharField(max_length=100)
     status = models.CharField(max_length=100)

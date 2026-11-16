@@ -208,8 +208,7 @@ TURNSTILE_SECRET = config("TURNSTILE_SECRET")
 
 from corsheaders.defaults import default_headers
 
-CORS_ALLOWED_ORIGINS = [o.strip() for o in
-    config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000').split(',') if o.strip()]
+CORS_ALLOWED_ORIGINS = [o.strip() for o in config("CORS_ALLOWED_ORIGINS", default=FRONTEND_URL).split(",") if o.strip()]
 
 # CORS_ALLOWED_ORIGINS = [
 #     'https://goodnewsmerch.store',
@@ -237,7 +236,7 @@ SIMPLE_JWT = {
 GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
 GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
 
-FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000').rstrip('/')
+FRONTEND_URL = config("FRONTEND_URL").split(",")[0].strip().rstrip("/")
 
 AUTH_USER_MODEL = 'accounts.Account'
 

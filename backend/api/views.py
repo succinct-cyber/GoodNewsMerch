@@ -636,6 +636,7 @@ class FlutterwaveVerifyView(APIView):
         except Exception:
             return Response({'error': 'Gateway error.'}, status=502)
 
+        from django.db import transaction
         data = result.get('data') or {}
         if result.get('status') != 'success' or data.get('status') != 'successful':
             return Response({'status': 'failed'}, status=400)
@@ -650,12 +651,23 @@ class FlutterwaveVerifyView(APIView):
         if Payment.objects.filter(payment_id=str(transaction_id)).exists():
             return Response({'error': 'This transaction has already been used.'}, status=400)
 
+        with transaction.atomic():
+            order = Order.objects.select_for_update().get(pk=order.pk)
+
+            existing = Payment.objects.filter(payment_id=str(transaction_id)).first()
+            if existing:
+                if order.payment_id == existing.pk:
+                    return Response({'status': 'success', 'order_number': order.order_number,
+                                     'payment_id': existing.payment_id})
+                return Response({'error': 'This transaction has already been used.'}, status=400)
+            
         payment = Payment.objects.create(
             user=request.user if request.user.is_authenticated else None,
             payment_id=str(transaction_id), payment_method='Flutterwave',
             amount_paid=data.get('amount', 0), status='successful',
         )
         _complete_order(order, payment, request)
+        
         return Response({'status': 'success', 'order_number': order.order_number,
                          'payment_id': payment.payment_id})
 

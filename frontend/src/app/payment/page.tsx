@@ -85,7 +85,6 @@ export default function PaymentPage() {
       // because it doesn't depend on any code of ours reaching into the modal.
       redirect_url: `${window.location.origin}/payment/confirm`,
       callback: (data: any) => {
-        console.log('[flw] callback', data?.status, data?.transaction_id)
         try { window.closePaymentModal?.() } catch {}
         if (data.status === 'successful' || data.status === 'completed') {
           finalize(String(data.transaction_id))
