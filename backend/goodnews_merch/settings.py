@@ -16,15 +16,20 @@ ALLOWED_HOSTS = [
     if h.strip()
 ]
 
-_csrf_from_env = config('CSRF_TRUSTED_ORIGINS', default='CORS_ALLOWED_ORIGINS + ["https://api.goodnewsmerch.store"]')
-CSRF_TRUSTED_ORIGINS = [
-    'https://goodnewsmerch.store',
-    'https://www.goodnewsmerch.store',
-    'http://localhost:3000',
-] + [
-    o.strip() for o in _csrf_from_env.split(',')
-    if o.strip()
-]
+# _csrf_from_env = config('CSRF_TRUSTED_ORIGINS', default='CORS_ALLOWED_ORIGINS + ["https://api.goodnewsmerch.store"]')
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://goodnewsmerch.store',
+#     'https://www.goodnewsmerch.store',
+#     'http://localhost:3000',
+# ] + [
+#     o.strip() for o in _csrf_from_env.split(',')
+#     if o.strip()
+# ]
+
+FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:3000").split(",")[0].strip().rstrip("/")
+
+CORS_ALLOWED_ORIGINS = [o.strip() for o in config("CORS_ALLOWED_ORIGINS", default=FRONTEND_URL).split(",") if o.strip()]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS + ["https://api.goodnewsmerch.store"]
 
 for _host in ALLOWED_HOSTS:
     if _host.startswith('.'):
@@ -208,7 +213,6 @@ TURNSTILE_SECRET = config("TURNSTILE_SECRET")
 
 from corsheaders.defaults import default_headers
 
-CORS_ALLOWED_ORIGINS = [o.strip() for o in config("CORS_ALLOWED_ORIGINS", default=FRONTEND_URL).split(",") if o.strip()]
 
 # CORS_ALLOWED_ORIGINS = [
 #     'https://goodnewsmerch.store',
@@ -235,8 +239,6 @@ SIMPLE_JWT = {
 # ── Google OAuth ───────────────────────────────────────────────
 GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
 GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
-
-FRONTEND_URL = config("FRONTEND_URL").split(",")[0].strip().rstrip("/")
 
 AUTH_USER_MODEL = 'accounts.Account'
 
