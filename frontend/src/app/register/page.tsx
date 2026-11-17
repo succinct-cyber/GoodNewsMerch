@@ -162,9 +162,14 @@ const widget = useRef<TurnstileInstance>(null)
                       <Turnstile
                         ref={widget}
                         siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                        options={{ retry: 'never' }}                       // fail once instead of looping forever
                         onSuccess={setToken}
-                        onExpire={() => setToken(null)}      // tokens expire after about 5 minutes
-                        onError={() => setToken(null)}
+                        onExpire={() => setToken(null)}
+                        onError={(code) => {
+                          console.error('Turnstile error', code)
+                          setToken(null)
+                          setErrors({ detail: `Verification error ${code}. Please refresh, or try another browser.` })
+                        }}
                       />
                     </div>
 
